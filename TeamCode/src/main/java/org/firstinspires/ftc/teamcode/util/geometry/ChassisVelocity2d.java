@@ -1,0 +1,32 @@
+package org.firstinspires.ftc.teamcode.util.geometry;
+
+public class ChassisVelocity2d {
+    private final Translation2d translationalVelocity;
+    private final double rotationalVelocity;
+
+    /**
+     * Creates a ChassisVelocity2d with a given translation and rotation speed.
+     *
+     * @param translationalVelocity velocity along x and y axes
+     * @param rotationalVelocity    angular velocity (radians per second)
+     */
+    public ChassisVelocity2d(Translation2d translationalVelocity, double rotationalVelocity) {
+        this.translationalVelocity = translationalVelocity;
+        this.rotationalVelocity = rotationalVelocity;
+    }
+
+    /** @return the translational velocity (x and y components) */
+    public Translation2d getTranslationalVelocity() {
+        return translationalVelocity;
+    }
+
+    /** @return the rotational velocity (radians per second) */
+    public double getRotationalVelocity() {
+        return rotationalVelocity;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ChassisVelocity2d{translation=%s, rotation=%.3f}", translationalVelocity, rotationalVelocity);
+    }
+}
