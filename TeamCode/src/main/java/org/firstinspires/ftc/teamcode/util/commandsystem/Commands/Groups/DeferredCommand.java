@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.util.commandsystem.Commands.Groups;
 
 import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
+import org.firstinspires.ftc.teamcode.util.commandsystem.Subsystem;
 
 import java.util.function.Supplier;
 
@@ -8,8 +9,9 @@ public class DeferredCommand extends Command {
     private final Supplier<Command> commandSupplier;
     private Command commandInstance;
 
-    public DeferredCommand(Supplier<Command> commandSupplier) {
+    public DeferredCommand(Supplier<Command> commandSupplier, Subsystem... requirements) {
         this.commandSupplier = commandSupplier;
+        addRequirements(requirements);
     }
 
     @Override

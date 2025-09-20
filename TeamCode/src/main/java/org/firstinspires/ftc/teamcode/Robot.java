@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
+import org.firstinspires.ftc.teamcode.util.TelemetryManager;
 import org.firstinspires.ftc.teamcode.util.commandsystem.CommandScheduler;
 
 /**
@@ -19,15 +20,19 @@ public class Robot {
 
     // Reference to the RobotContainer which holds subsystems
     private final RobotContainer robotContainer;
+    private OpMode opMode;
 
     public Robot(OpMode opMode) {
         robotContainer = RobotContainer.getInstance(opMode);
+        this.opMode = opMode;
     }
 
     // ===================== Robot Methods =====================
 
     /** Called once when opmode init phase starts (all opmodes) */
-    public void robotInitStart() {}
+    public void robotInitStart() {
+        TelemetryManager.init(opMode.telemetry);
+    }
 
     /** Called repeatedly while opmode is in init but not started */
     public void robotInitLoop() {}
@@ -35,6 +40,7 @@ public class Robot {
     /** Called repeatedly both in init and active phases */
     public void robotPeriodic() {
         CommandScheduler.getInstance().run();
+        TelemetryManager.update();
     }
 
     /** Called once when opmode becomes active */
@@ -85,7 +91,7 @@ public class Robot {
 
     /** Called once when TeleOp opmode init phase starts */
     public void teleOpInitStart() {
-        robotContainer.scheduleTeleOp();
+
     }
 
     /** Called repeatedly while TeleOp opmode is in init */
@@ -95,7 +101,9 @@ public class Robot {
     public void teleOpPeriodic() {}
 
     /** Called once when TeleOp opmode becomes active */
-    public void teleOpActiveStart() {}
+    public void teleOpActiveStart() {
+        robotContainer.scheduleTeleOp();
+    }
 
     /** Called repeatedly while TeleOp opmode is active */
     public void teleOpActiveLoop() {}

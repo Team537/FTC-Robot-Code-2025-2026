@@ -32,6 +32,8 @@ public class Twist2d {
         return new Rotation2d(dtheta);
     }
 
+    public static final Twist2d ZERO = new Twist2d(0.0,0.0,0.0);
+
     public Pose2d asPose() {
         return new Pose2d(getTranslation(), getRotation());
     }

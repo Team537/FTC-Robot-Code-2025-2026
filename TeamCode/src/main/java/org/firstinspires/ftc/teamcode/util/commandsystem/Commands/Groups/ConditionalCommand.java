@@ -15,6 +15,8 @@ public class ConditionalCommand extends Command {
         this.onTrue = onTrue;
         this.onFalse = onFalse;
         this.condition = condition;
+        addRequirements(onTrue.getRequirements());
+        addRequirements(onFalse.getRequirements());
     }
 
     @Override

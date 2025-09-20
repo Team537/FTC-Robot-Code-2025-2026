@@ -14,6 +14,10 @@ public class SelectorCommand<K> extends Command {
     public SelectorCommand(Supplier<K> keySupplier, Map<K, Command> commandMap) {
         this.keySupplier = keySupplier;
         this.commandMap = commandMap;
+
+        for (Command command : commandMap.values()) {
+            addRequirements(command.getRequirements());
+        }
     }
 
     @Override

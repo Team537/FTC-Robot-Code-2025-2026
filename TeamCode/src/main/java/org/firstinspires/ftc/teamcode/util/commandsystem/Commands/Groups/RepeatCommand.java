@@ -7,6 +7,7 @@ public class RepeatCommand extends Command {
 
     public RepeatCommand(Command command) {
         this.command = command;
+        addRequirements(command.getRequirements());
     }
 
     @Override

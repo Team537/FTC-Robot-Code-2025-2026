@@ -6,61 +6,140 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.util.MecanumPoseEstimator;
+import org.firstinspires.ftc.teamcode.util.TelemetryManager;
 import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Rotation2d;
-import org.firstinspires.ftc.teamcode.util.geometry.Twist2d;
 
+import java.util.Arrays;
+
+/**
+ * Mecanum drivetrain subsystem for FTC.
+ *
+ * Responsibilities:
+ * - Manage 4 mecanum wheels (FL, FR, BL, BR)
+ * - Drive the robot with field-relative or robot-relative velocities
+ * - Convert chassis velocity → wheel velocities
+ * - Update robot pose using mecanum odometry + IMU heading
+ */
 public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
 
+    // ---------------- MOTORS ----------------
     private DcMotorEx frontLeftMotor;
     private DcMotorEx frontRightMotor;
     private DcMotorEx backLeftMotor;
     private DcMotorEx backRightMotor;
 
+    // ---------------- SENSORS ----------------
     private IMU imu;
 
-    private int[] lastWheelPositions = new int[4]; // FL, FR, BL, BR
+    // ---------------- ODOMETRY ----------------
+    private MecanumPoseEstimator mecanumPoseEstimator =
+        new MecanumPoseEstimator(Constants.Drive.KINEMATICS, Pose2d.ZERO);
 
+    /**
+     * Constructor: initializes motors, IMU, and odometry
+     */
     public MecanumDriveSubsystem(HardwareMap hardwareMap) {
-
         super();
+
+        // Initialize motors from hardware map
         frontLeftMotor = hardwareMap.get(DcMotorEx.class, Constants.Drive.FRONT_LEFT_MOTOR_NAME);
         frontRightMotor = hardwareMap.get(DcMotorEx.class, Constants.Drive.FRONT_RIGHT_MOTOR_NAME);
         backLeftMotor = hardwareMap.get(DcMotorEx.class, Constants.Drive.BACK_LEFT_MOTOR_NAME);
         backRightMotor = hardwareMap.get(DcMotorEx.class, Constants.Drive.BACK_RIGHT_MOTOR_NAME);
+
+        // Set motor directions according to configuration constants
+        frontLeftMotor.setDirection(Constants.Drive.FRONT_LEFT_MOTOR_DIRECTION);
+        frontRightMotor.setDirection(Constants.Drive.FRONT_RIGHT_MOTOR_DIRECTION);
+        backLeftMotor.setDirection(Constants.Drive.BACK_LEFT_MOTOR_DIRECTION);
+        backRightMotor.setDirection(Constants.Drive.BACK_RIGHT_MOTOR_DIRECTION);
+
+        // Initialize IMU
         imu = hardwareMap.get(IMU.class, Constants.Drive.IMU_NAME);
 
+        // Force reading to initialize
         imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
+        // Reset odometry to origin
+        mecanumPoseEstimator.resetPose(Pose2d.ZERO, getIMUHeading());
     }
 
+    /**
+     * Returns the robot heading as a Rotation2d using the IMU yaw angle.
+     */
+    public Rotation2d getIMUHeading() {
+        return new Rotation2d(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+    }
+
+    /**
+     * Periodic update method called by scheduler.
+     * - Calls superclass periodic for drive control
+     * - Sends robot pose telemetry
+     */
     public void periodic() {
         super.periodic();
+        TelemetryManager.put("Position", getRobotPose().toString());
     }
 
+    // ---------------- DRIVE ----------------
+
+    /**
+     * Convert chassis velocity → wheel velocities and send to motors.
+     * - Uses proportional scaling to prevent exceeding max wheel speed
+     * - Converts inches/sec → ticks/sec for FTC motors
+     */
     @Override
     public void setMotors(ChassisVelocity2d chassisVelocity) {
-        // Use your kinematics class to get individual wheel speeds (in inches/sec)
-        double[] wheelSpeedsInchesPerSec = Constants.Drive.KINEMATICS.toWheelSpeeds(chassisVelocity);
 
-        // Convert inches/sec → ticks/sec
+        // Convert chassis velocity to individual wheel speeds
+        double[] wheelSpeeds = Constants.Drive.KINEMATICS.toWheelSpeeds(chassisVelocity);
+
+        // Proportional scaling: prevent wheel speed from exceeding max
+        double max = Arrays.stream(wheelSpeeds).map(Math::abs).max().orElse(0.0);
+        if (max > Constants.Drive.MAX_WHEEL_SPEED) {
+            double scale = Constants.Drive.MAX_WHEEL_SPEED / max;
+            for (int i = 0; i < wheelSpeeds.length; i++) {
+                wheelSpeeds[i] *= scale;
+            }
+        }
+
+        // Send telemetry for debugging
+        TelemetryManager.put("Wheel Speeds FL (in/s)", wheelSpeeds[0]);
+        TelemetryManager.put("Wheel Speeds FR (in/s)", wheelSpeeds[1]);
+        TelemetryManager.put("Wheel Speeds BL (in/s)", wheelSpeeds[2]);
+        TelemetryManager.put("Wheel Speeds BR (in/s)", wheelSpeeds[3]);
+        TelemetryManager.put("Reported Speed", Constants.Drive.KINEMATICS.fromWheelSpeeds(wheelSpeeds).toString());
+
+        // Convert wheel speed from inches/sec → encoder ticks/sec
         double ticksPerInch = Constants.Drive.TICKS_PER_REVOLUTION / Constants.Drive.WHEEL_CIRCUMFERENCE;
         double[] wheelSpeedsTicksPerSec = new double[4];
         for (int i = 0; i < 4; i++) {
-            wheelSpeedsTicksPerSec[i] = wheelSpeedsInchesPerSec[i] * ticksPerInch;
+            wheelSpeedsTicksPerSec[i] = wheelSpeeds[i] * ticksPerInch;
         }
 
-        // Write velocity to motors
+        // Apply velocities to motors
         frontLeftMotor.setVelocity(wheelSpeedsTicksPerSec[0]);
         frontRightMotor.setVelocity(wheelSpeedsTicksPerSec[1]);
         backLeftMotor.setVelocity(wheelSpeedsTicksPerSec[2]);
         backRightMotor.setVelocity(wheelSpeedsTicksPerSec[3]);
     }
 
+    // ---------------- ODOMETRY ----------------
+
+    /**
+     * Update robot pose using mecanum wheel encoders + IMU heading.
+     * Steps:
+     * 1. Read current motor positions
+     * 2. Convert ticks → inches
+     * 3. Feed distances + heading into MecanumPoseEstimator
+     * 4. Update HolonomicDriveSubsystem robotPose
+     */
     @Override
     public void updateOdometry() {
 
+        // Get current motor encoder positions
         int[] currentPositions = new int[] {
             frontLeftMotor.getCurrentPosition(),
             frontRightMotor.getCurrentPosition(),
@@ -68,26 +147,18 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
             backRightMotor.getCurrentPosition()
         };
 
-        int[] deltaTicks = new int[4];
-        for (int i = 0; i < 4; i++) {
-            deltaTicks[i] = currentPositions[i] - lastWheelPositions[i];
-            lastWheelPositions[i] = currentPositions[i]; // store for next update
-        }
-
+        // Convert ticks → inches
         double ticksPerRev = Constants.Drive.TICKS_PER_REVOLUTION;
         double wheelCircumference = Constants.Drive.WHEEL_CIRCUMFERENCE;
-        double[] deltaInches = new double[4];
+        double[] currentPositionInches = new double[4];
         for (int i = 0; i < 4; i++) {
-            deltaInches[i] = deltaTicks[i] * wheelCircumference / ticksPerRev;
+            currentPositionInches[i] = currentPositions[i] * wheelCircumference / ticksPerRev;
         }
 
-        Twist2d robotDelta = Constants.Drive.KINEMATICS.fromWheelDeltas(deltaInches);
+        // Update pose estimator with distances + IMU heading
+        mecanumPoseEstimator.update(currentPositionInches, getIMUHeading());
 
-        Rotation2d heading = new Rotation2d(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-
-        Pose2d newPose = getRobotPose().exp(robotDelta).setRotation(heading);
-        setRobotPose(newPose);
-
+        // Apply new pose to the subsystem
+        setRobotPose(mecanumPoseEstimator.getEstimatedPose());
     }
-
 }

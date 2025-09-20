@@ -35,7 +35,7 @@ public class MecanumDriveKinematics {
         double vy = chassisVelocity.getTranslationalVelocity().getY(); // right
         double omega = chassisVelocity.getRotationalVelocity();        // rad/s
 
-        double radius = wheelBase + trackWidth;
+        double radius = wheelBase / 2.0 + trackWidth / 2.0;
 
         double frontLeft  = vx - vy - omega * radius;
         double frontRight = vx + vy + omega * radius;
@@ -62,7 +62,7 @@ public class MecanumDriveKinematics {
 
         double vx = (frontLeft + frontRight + backLeft + backRight) / 4.0;
         double vy = (-frontLeft + frontRight + backLeft - backRight) / 4.0;
-        double omega = (-frontLeft + frontRight - backLeft + backRight) / (4.0 * (wheelBase + trackWidth));
+        double omega = (-frontLeft + frontRight - backLeft + backRight) / (4.0 * (wheelBase / 2.0 + trackWidth / 2.0));
 
         return new ChassisVelocity2d(new Translation2d(vx, vy), omega);
     }
@@ -85,7 +85,7 @@ public class MecanumDriveKinematics {
         // inverse kinematics for mecanum (robot-relative)
         double dx = (fl + fr + bl + br) / 4.0;  // forward/back
         double dy = (-fl + fr + bl - br) / 4.0; // strafe
-        double dtheta = (-fl + fr - bl + br) / (4.0 * (trackWidth / 2 + wheelBase / 2)); // rotation
+        double dtheta = (-fl + fr - bl + br) / (4.0 * (trackWidth / 2.0 + wheelBase / 2.0)); // rotation
 
         return new Twist2d(dx, dy, dtheta);
     }

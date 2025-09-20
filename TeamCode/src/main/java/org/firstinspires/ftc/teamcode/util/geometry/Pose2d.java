@@ -89,6 +89,8 @@ public class Pose2d {
         return new Pose2d(invTrans, invRot);
     }
 
+    public static final Pose2d ZERO = new Pose2d(Translation2d.ZERO,Rotation2d.ZERO);
+
     @Override
     public String toString() {
         return String.format("Pose2d(%s, %s)", translation, rotation);

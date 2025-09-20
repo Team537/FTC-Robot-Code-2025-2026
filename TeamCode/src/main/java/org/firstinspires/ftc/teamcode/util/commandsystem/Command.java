@@ -47,6 +47,11 @@ public abstract class Command {
         Collections.addAll(requirements, subsystems);
     }
 
+    /** Register a subsystem requirement. */
+    protected void addRequirements(Set<Subsystem> subsystems) {
+        addRequirements(subsystems.toArray(new Subsystem[0]));
+    }
+
     /** Get all subsystem requirements. */
     public Set<Subsystem> getRequirements() {
         return requirements;
@@ -55,6 +60,11 @@ public abstract class Command {
     /** Check if the command requires a subsystem. */
     public boolean hasRequirement(Subsystem subsystem) {
         return this.getRequirements().contains(subsystem);
+    }
+
+    public Command withRequirements(Subsystem... subsystems) {
+        addRequirements(subsystems);
+        return this;
     }
 
     /**

@@ -24,6 +24,14 @@ public class Translation2d {
         return new Translation2d(x - other.x, y - other.y);
     }
 
+    public Translation2d times(double scalar) {
+        return new Translation2d(x * scalar,y * scalar);
+    }
+
+    public Translation2d div(double scalar) {
+        return new Translation2d(x / scalar, y / scalar);
+    }
+
     public Translation2d rotateBy(Rotation2d rot) {
         double cos = Math.cos(rot.getRadians());
         double sin = Math.sin(rot.getRadians());
@@ -36,6 +44,8 @@ public class Translation2d {
     public Translation2d unaryMinus() {
         return new Translation2d(-x, -y);
     }
+
+    public static final Translation2d ZERO = new Translation2d(0.0,0.0);
 
     @Override
     public String toString() {

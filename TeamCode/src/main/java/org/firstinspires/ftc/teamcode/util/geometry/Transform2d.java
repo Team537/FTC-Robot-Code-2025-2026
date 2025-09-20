@@ -31,6 +31,8 @@ public class Transform2d {
         return new Transform2d(invTrans, invRot);
     }
 
+    public static final Transform2d ZERO = new Transform2d(Translation2d.ZERO,Rotation2d.ZERO);
+
     @Override
     public String toString() {
         return String.format("Transform2d(%s, %s)", translation, rotation);

@@ -18,12 +18,12 @@ public class ParallelCommandGroup extends Command {
     /** Commands that are currently active (reset on initialize). */
     private final Set<Command> activeCommands = Collections.synchronizedSet(new HashSet<>());
 
-    public ParallelCommandGroup(Set<Command> initialCommands) {
-        add(initialCommands);
+    public ParallelCommandGroup(Set<Command> commands) {
+        add(commands);
     }
 
-    public ParallelCommandGroup(Command... initialCommands) {
-        add(initialCommands);
+    public ParallelCommandGroup(Command... commands) {
+        add(commands);
     }
 
     /** Add new commands to the group (varargs). */
@@ -34,6 +34,10 @@ public class ParallelCommandGroup extends Command {
     /** Add new commands to the group (Set). */
     public void add(Set<Command> commands) {
         allCommands.addAll(commands);
+
+        for (Command command : allCommands) {
+            addRequirements(command.getRequirements());
+        }
     }
 
     /** Remove commands permanently from the group (varargs). */

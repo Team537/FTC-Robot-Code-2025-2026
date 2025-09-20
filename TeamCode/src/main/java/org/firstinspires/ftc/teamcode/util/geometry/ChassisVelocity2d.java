@@ -25,6 +25,8 @@ public class ChassisVelocity2d {
         return rotationalVelocity;
     }
 
+    public static final ChassisVelocity2d ZERO = new ChassisVelocity2d(Translation2d.ZERO,0.0);
+
     @Override
     public String toString() {
         return String.format("ChassisVelocity2d{translation=%s, rotation=%.3f}", translationalVelocity, rotationalVelocity);

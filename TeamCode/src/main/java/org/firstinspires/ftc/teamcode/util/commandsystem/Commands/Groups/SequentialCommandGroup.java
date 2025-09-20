@@ -36,6 +36,9 @@ public class SequentialCommandGroup extends Command {
     /** Add commands to the group (List). */
     public void add(List<Command> commands) {
         allCommands.addAll(commands);
+        for (Command command : commands) {
+            addRequirements(command.getRequirements());
+        }
     }
 
     /** Remove commands permanently from the group (varargs). */

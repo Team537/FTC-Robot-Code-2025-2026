@@ -34,12 +34,16 @@ public class ParallelDeadlineGroup extends Command {
 
     /** Add commands (varargs). */
     public void add(Command... commands) {
-        Collections.addAll(allCommands, commands);
+        add(Set.of(commands));
     }
 
     /** Add commands (Set). */
     public void add(Set<Command> commands) {
         allCommands.addAll(commands);
+
+        for (Command command : commands) {
+            addRequirements(command.getRequirements());
+        }
     }
 
     /** Remove commands permanently (varargs). */

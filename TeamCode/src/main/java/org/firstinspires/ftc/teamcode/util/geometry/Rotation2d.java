@@ -39,6 +39,8 @@ public class Rotation2d {
         return a;
     }
 
+    public static final Rotation2d ZERO = new Rotation2d(0.0);
+
     @Override
     public String toString() {
         return String.format("Rotation2d(%.2f rad, %.2f°)", radians, getDegrees());
