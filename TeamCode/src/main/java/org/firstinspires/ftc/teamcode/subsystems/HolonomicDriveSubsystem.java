@@ -65,16 +65,6 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
     /** Current pose of the robot in field coordinates */
     private Pose2d robotPose = new Pose2d(new Translation2d(0.0,0.0),new Rotation2d(0.0));
 
-    /** Set robot pose manually (e.g., for odometry reset) */
-    public void setRobotPose(Pose2d pose) {
-        robotPose = pose;
-    }
-
-    /** Get the current robot pose */
-    public Pose2d getRobotPose() {
-        return robotPose;
-    }
-
     /** PID controllers for X, Y translation and rotation */
     private PIDController xController = new PIDController(0.0,0.0,0.0);
     private PIDController yController = new PIDController(0.0,0.0,0.0);
@@ -101,6 +91,18 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
         setMotors(targetVelocity);
         updateOdometry();
     }
+
+    /** Set robot pose manually (e.g., for odometry reset) */
+    public abstract void setRobotPose(Pose2d pose);
+
+    /** Get the current robot pose */
+    public abstract Pose2d getRobotPose();
+
+    /** Set individual motor outputs based on chassis velocity */
+    public abstract void setMotors(ChassisVelocity2d velocity);
+
+    /** Update robot pose (odometry) */
+    public abstract void updateOdometry();
 
     // ---------------- CHASSIS (BOTH) ----------------
 
@@ -212,13 +214,4 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
         return getDriveToRotationCommand(() -> targetRadians);
     }
 
-    /** Set individual motor outputs based on chassis velocity */
-    public void setMotors(ChassisVelocity2d velocity) {
-        // Implementation depends on drivetrain (mecanum, omni, etc.)
-    }
-
-    /** Update robot pose (odometry) */
-    public void updateOdometry() {
-        // Implementation depends on sensors and wheel tracking
-    }
 }
