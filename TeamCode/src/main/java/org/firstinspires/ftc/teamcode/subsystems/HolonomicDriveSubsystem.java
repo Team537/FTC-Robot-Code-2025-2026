@@ -32,7 +32,7 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
      * Inner subsystem representing translational velocity state.
      */
     private class TranslationalSubsystem extends Subsystem {
-        private Translation2d translationalVelocity = new Translation2d(0.0,0.0);
+        private Translation2d translationalVelocity = new Translation2d(0.0, 0.0);
 
         /** Set current translational velocity */
         public void setTranslationalVelocity(Translation2d velocity) {
@@ -66,9 +66,9 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
     private Pose2d robotPose = new Pose2d(new Translation2d(0.0, 0.0),new Rotation2d(0.0));
 
     /** PID controllers for X, Y translation and rotation */
-    private PIDController xController = new PIDController(0.0,0.0,0.0);
-    private PIDController yController = new PIDController(0.0,0.0,0.0);
-    private PIDController thetaController = new PIDController(0.0,0.0,0.0);
+    private PIDController xController = new PIDController(0.0, 0.0, 0.0);
+    private PIDController yController = new PIDController(0.0, 0.0, 0.0);
+    private PIDController thetaController = new PIDController(0.0, 0.0, 0.0);
 
     /** Constructor initializes subsystems and enables continuous input for rotation PID */
     public HolonomicDriveSubsystem() {

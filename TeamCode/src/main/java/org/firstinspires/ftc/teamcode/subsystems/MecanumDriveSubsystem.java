@@ -164,7 +164,7 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
 
     /** Set robot pose manually (e.g., for odometry reset) */
     public void setRobotPose(Pose2d pose) {
-        mecanumPoseEstimator.resetPose(pose,getIMUHeading());
+        mecanumPoseEstimator.resetPose(pose, getIMUHeading());
     }
 
     /** Get the current robot pose */

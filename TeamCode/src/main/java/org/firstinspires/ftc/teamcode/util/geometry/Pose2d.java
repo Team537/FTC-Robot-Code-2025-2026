@@ -17,11 +17,11 @@ public class Pose2d {
     public Rotation2d getRotation() { return rotation; }
 
     public Pose2d setTranslation(Translation2d translation) {
-        return new Pose2d(translation,this.rotation);
+        return new Pose2d(translation, this.rotation);
     }
 
     public Pose2d setRotation(Rotation2d rotation) {
-        return new Pose2d(this.translation,rotation);
+        return new Pose2d(this.translation, rotation);
     }
 
     /** Apply a transform to this pose */
@@ -89,7 +89,7 @@ public class Pose2d {
         return new Pose2d(invTrans, invRot);
     }
 
-    public static final Pose2d ZERO = new Pose2d(Translation2d.ZERO,Rotation2d.ZERO);
+    public static final Pose2d ZERO = new Pose2d(Translation2d.ZERO, Rotation2d.ZERO);
 
     @Override
     public String toString() {

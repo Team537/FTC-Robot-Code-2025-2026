@@ -25,7 +25,7 @@ public class Translation2d {
     }
 
     public Translation2d times(double scalar) {
-        return new Translation2d(x * scalar,y * scalar);
+        return new Translation2d(x * scalar, y * scalar);
     }
 
     public Translation2d div(double scalar) {
@@ -45,7 +45,7 @@ public class Translation2d {
         return new Translation2d(-x, -y);
     }
 
-    public static final Translation2d ZERO = new Translation2d(0.0,0.0);
+    public static final Translation2d ZERO = new Translation2d(0.0, 0.0);
 
     @Override
     public String toString() {
