@@ -19,6 +19,9 @@ public class RobotContainer {
 
     public MecanumDriveSubsystem driveSubsystem;
 
+    private Gamepad gamepad1;
+    private Gamepad gamepad2;
+
     public static RobotContainer getInstance(OpMode opMode) {
         if (instance == null) {
             instance = new RobotContainer(opMode);
@@ -33,22 +36,17 @@ public class RobotContainer {
         this.opMode = opMode;
         driveSubsystem = new MecanumDriveSubsystem(opMode.hardwareMap);
         driveSubsystem.register();
+        bindGamepads(opMode);
     }
 
     /**
-     * returns a gamepad from the active opMode
-     * @param number the ID of the gamepad (1 or 2)
-     * @return the gamepad of the active opMode
+     * Binds the controller objects to the respective controllers.
+     * This is needed because the controller objects do not save across opModes.
+     * @param opMode
      */
-    private Gamepad getGamepad(int number) {
-        switch (number) {
-            case 1:
-                return opMode.gamepad1;
-            case 2:
-                return opMode.gamepad2;
-            default:
-                throw new IllegalArgumentException("Expected controller 1 or 2");
-        }
+    private void bindGamepads(OpMode opMode) {
+        gamepad1 = opMode.gamepad1;
+        gamepad2 = opMode.gamepad2;
     }
 
     /**
@@ -59,28 +57,33 @@ public class RobotContainer {
             driveSubsystem.getDriveVelocityCommand(
 
                 () -> {
+
+                    // Get the translational velocities from the gamepad.
+                    // Y is inverted because the gamepad reports "up" on the gamepad as negative, which is opposite to the coordinate frame we are using.
                     Translation2d translationalVelocity = new Translation2d(
-                        getGamepad(1).left_stick_x * Constants.Drive.MAX_TRANSLATIONAL_SPEED,
-                        -getGamepad(1).left_stick_y * Constants.Drive.MAX_TRANSLATIONAL_SPEED
+                        gamepad1.left_stick_x * Constants.Drive.MAX_TRANSLATIONAL_SPEED,
+                        -gamepad1.left_stick_y * Constants.Drive.MAX_TRANSLATIONAL_SPEED
                     );
 
+                    // Clamp translational velocity
                     if (translationalVelocity.norm() > Constants.Drive.MAX_TRANSLATIONAL_SPEED) {
                         translationalVelocity = translationalVelocity.div(translationalVelocity.norm()).times(Constants.Drive.MAX_TRANSLATIONAL_SPEED);
                     }
 
-                    double rotationalVelocity = -getGamepad(1).right_stick_x * Constants.Drive.MAX_ROTATIONAL_SPEED;
+                    // Get the rotational velocity frame the gamepad.
+                    // Inverted because left (negative X) should result in a counter-clockwise (positive) rotation
+                    double rotationalVelocity = -gamepad1.right_stick_x * Constants.Drive.MAX_ROTATIONAL_SPEED;
 
+                    // Clamp rotational velocity
                     rotationalVelocity = MathUtil.clamp(rotationalVelocity, -Constants.Drive.MAX_ROTATIONAL_SPEED, Constants.Drive.MAX_ROTATIONAL_SPEED);
 
+                    // Return a value of the combined velocities
                     return new ChassisVelocity2d(
                         translationalVelocity,
                         rotationalVelocity
                     );
 
                 }
-
-
-
 
             )
         );
