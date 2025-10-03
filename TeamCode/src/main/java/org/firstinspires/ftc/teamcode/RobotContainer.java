@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.SimpleIntakeSubsystem;
 import org.firstinspires.ftc.teamcode.util.MathUtil;
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.FunctionalCommand;
@@ -18,6 +19,7 @@ public class RobotContainer {
     public OpMode opMode;
 
     public MecanumDriveSubsystem driveSubsystem;
+    public SimpleIntakeSubsystem intakeSubsystem;
 
     private Gamepad gamepad1;
     private Gamepad gamepad2;
@@ -36,6 +38,8 @@ public class RobotContainer {
         this.opMode = opMode;
         driveSubsystem = new MecanumDriveSubsystem(opMode.hardwareMap);
         driveSubsystem.register();
+        intakeSubsystem = new SimpleIntakeSubsystem(opMode.hardwareMap);
+        intakeSubsystem.register();
         bindGamepads(opMode);
     }
 
@@ -85,6 +89,15 @@ public class RobotContainer {
 
                 }
 
+            )
+        );
+
+
+        intakeSubsystem.setDefaultCommand(
+            intakeSubsystem.getIntakeCommand(
+                () -> {
+                    return (double) gamepad1.left_trigger;
+                }
             )
         );
 
