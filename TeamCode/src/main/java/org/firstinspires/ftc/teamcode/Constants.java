@@ -40,5 +40,9 @@ public class Constants {
         public static final double MAX_WHEEL_SPEED = MAX_TRANSLATIONAL_SPEED * Math.sqrt(2.0);
 
     }
+    public static class Assemblys {
+        public static final String hopperMotor = "hopper motor";
 
+        public static final String intakeMotor = "intake motor";
+    }
 }
