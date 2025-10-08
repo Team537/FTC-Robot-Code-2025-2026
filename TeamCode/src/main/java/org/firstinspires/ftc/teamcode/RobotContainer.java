@@ -1,10 +1,14 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Bitmap;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.util.MathUtil;
+import org.firstinspires.ftc.teamcode.util.ShooterConfig;
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.FunctionalCommand;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.RunCommand;
@@ -17,10 +21,14 @@ public class RobotContainer {
     public static RobotContainer instance;
     public OpMode opMode;
 
-    public MecanumDriveSubsystem driveSubsystem;
+   // public MecanumDriveSubsystem driveSubsystem;
+
+    public ShooterSubsystem shooterSubsystem;
 
     private Gamepad gamepad1;
     private Gamepad gamepad2;
+
+    private ShooterConfig config = Constants.Shooter.CONFIG;
 
     public static RobotContainer getInstance(OpMode opMode) {
         if (instance == null) {
@@ -34,8 +42,10 @@ public class RobotContainer {
 
     private RobotContainer(OpMode opMode) {
         this.opMode = opMode;
-        driveSubsystem = new MecanumDriveSubsystem(opMode.hardwareMap);
-        driveSubsystem.register();
+        //driveSubsystem = new MecanumDriveSubsystem(opMode.hardwareMap);
+        //driveSubsystem.register();
+        shooterSubsystem = new ShooterSubsystem(opMode.hardwareMap, config);
+        shooterSubsystem.register();
         bindGamepads(opMode);
     }
 
@@ -53,7 +63,7 @@ public class RobotContainer {
      * schedule all commands for manual control
      */
     public void scheduleTeleOp() {
-        driveSubsystem.setDefaultCommand(
+        /*driveSubsystem.setDefaultCommand(
             driveSubsystem.getDriveVelocityCommand(
 
                 () -> {
@@ -88,6 +98,16 @@ public class RobotContainer {
             )
         );
 
+         */
+        shooterSubsystem.setDefaultCommand(
+                shooterSubsystem.getSetVelocityCommand(
+
+                        () -> {
+                            double shooterValue = gamepad1.left_trigger * 50.0;
+                            return shooterValue;
+                        }
+                )
+        );
     }
 
 }
