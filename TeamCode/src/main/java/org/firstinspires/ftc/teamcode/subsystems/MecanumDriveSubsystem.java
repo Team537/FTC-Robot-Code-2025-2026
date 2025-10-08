@@ -70,7 +70,7 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
      * Returns the robot heading as a Rotation2d using the IMU yaw angle.
      */
     public Rotation2d getIMUHeading() {
-        return new Rotation2d(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        return new Rotation2d(-imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
     }
 
     /**
@@ -112,6 +112,12 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
         TelemetryManager.put("Wheel Speeds BR (in/s)", wheelSpeeds[3]);
         TelemetryManager.put("Reported Speed", Constants.Drive.KINEMATICS.fromWheelSpeeds(wheelSpeeds).toString());
 
+        frontLeftMotor.setPower(wheelSpeeds[0] / Constants.Drive.MAX_WHEEL_SPEED);
+        frontRightMotor.setPower(wheelSpeeds[1] / Constants.Drive.MAX_WHEEL_SPEED);
+        backLeftMotor.setPower(wheelSpeeds[2] / Constants.Drive.MAX_WHEEL_SPEED);
+        backRightMotor.setPower(wheelSpeeds[3] / Constants.Drive.MAX_WHEEL_SPEED);
+
+        /*
         // Convert wheel speed from inches/sec → encoder ticks/sec
         double ticksPerInch = Constants.Drive.TICKS_PER_REVOLUTION / Constants.Drive.WHEEL_CIRCUMFERENCE;
         double[] wheelSpeedsTicksPerSec = new double[4];
@@ -124,6 +130,8 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
         frontRightMotor.setVelocity(wheelSpeedsTicksPerSec[1]);
         backLeftMotor.setVelocity(wheelSpeedsTicksPerSec[2]);
         backRightMotor.setVelocity(wheelSpeedsTicksPerSec[3]);
+
+         */
     }
 
     // ---------------- ODOMETRY ----------------

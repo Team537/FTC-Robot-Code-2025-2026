@@ -72,6 +72,7 @@ public class Robot {
     public void autoInitStart() {
 
         CommandScheduler.getInstance().cancelAll();
+        robotContainer.scheduleAuto();
 
     }
 

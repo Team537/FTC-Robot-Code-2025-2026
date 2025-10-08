@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.routines.ExampleRoutine;
 import org.firstinspires.ftc.teamcode.subsystems.MotorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.util.MathUtil;
@@ -137,5 +138,14 @@ public class RobotContainer {
         );
 
     }
+    public void scheduleAuto() {
+        TelemetryManager.put("hello", true);
+        new ExampleRoutine(this.driveSubsystem, this.hopperSubsystem, this.intakeSubsystem).getCommand().schedule();
+        TelemetryManager.put("bye", true);
+    }
+
+
 
 }
+
+
