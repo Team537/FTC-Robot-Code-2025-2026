@@ -26,8 +26,8 @@ public class Constants {
 
         public static final String IMU_NAME = "imu";
 
-        public static final double WHEEL_BASE = 10.0;
-        public static final double TRACK_WIDTH = 10.0;
+        public static final double WHEEL_BASE = 14.25;
+        public static final double TRACK_WIDTH = 17.50;
         public static final MecanumDriveKinematics KINEMATICS = new MecanumDriveKinematics(WHEEL_BASE, TRACK_WIDTH);
         public static final double WHEEL_CIRCUMFERENCE = (2.0 * Math.PI) * 4.0;
 

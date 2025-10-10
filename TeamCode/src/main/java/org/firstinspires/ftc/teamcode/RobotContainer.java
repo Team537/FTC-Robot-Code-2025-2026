@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.util.MathUtil;
 import org.firstinspires.ftc.teamcode.util.MotorState;
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
+import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.InstantCommand;
 import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 
@@ -139,9 +140,10 @@ public class RobotContainer {
 
     }
     public void scheduleAuto() {
-        TelemetryManager.put("hello", true);
-        new ExampleRoutine(this.driveSubsystem, this.hopperSubsystem, this.intakeSubsystem).getCommand().schedule();
-        TelemetryManager.put("bye", true);
+        TelemetryManager.put("Wheels move", true);
+        ExampleRoutine routine = n ExampleRoutine(this.driveSubsystem, this.hopperSubsystem, this.intakeSubsystem);
+        routine.getCommand().schedule();
+        TelemetryManager.put("wheels stop", true);
     }
 
 

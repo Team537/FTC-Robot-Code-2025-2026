@@ -72,7 +72,7 @@ public class Robot {
     public void autoInitStart() {
 
         CommandScheduler.getInstance().cancelAll();
-        robotContainer.scheduleAuto();
+
 
     }
 
@@ -83,7 +83,11 @@ public class Robot {
     public void autoPeriodic() {}
 
     /** Called once when Auto opmode becomes active */
-    public void autoActiveStart() {}
+    public void autoActiveStart() {
+
+        robotContainer.scheduleAuto();
+
+    }
 
     /** Called repeatedly while Auto opmode is active */
     public void autoActiveLoop() {}

@@ -13,8 +13,8 @@ public class PIDController {
     private double maxInput = 0.0;
     private boolean continuous = false;
 
-    private double minOutput = -1.0;
-    private double maxOutput = 1.0;
+    private double minOutput = -Double.MAX_VALUE;
+    private double maxOutput = Double.MAX_VALUE;
 
     private double integralMin = -1.0;
     private double integralMax = 1.0;

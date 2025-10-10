@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.util.PIDController;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.Groups.ParallelCommandGroup;
@@ -66,9 +67,9 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
     private Pose2d robotPose = new Pose2d(new Translation2d(0.0, 0.0),new Rotation2d(0.0));
 
     /** PID controllers for X, Y translation and rotation */
-    private PIDController xController = new PIDController(0.0, 0.0, 0.0);
-    private PIDController yController = new PIDController(0.0, 0.0, 0.0);
-    private PIDController thetaController = new PIDController(0.0, 0.0, 0.0);
+    private PIDController xController = new PIDController(50.0, 0.0, 0.0);
+    private PIDController yController = new PIDController(50.0, 0.0, 0.0);
+    private PIDController thetaController = new PIDController(1.0, 0.0, 0.0);
 
     /** Constructor initializes subsystems and enables continuous input for rotation PID */
     public HolonomicDriveSubsystem() {
