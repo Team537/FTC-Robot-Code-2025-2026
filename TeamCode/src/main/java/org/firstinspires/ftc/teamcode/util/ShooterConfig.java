@@ -21,6 +21,7 @@ public class ShooterConfig {
         this.wheelCircumference = wheelCircumference;
         this.encoderPulsePerRevolution = encoderPulsePerRevolution;
         this.gearRatio = gearRatio;
+        this.maxVelocity = maxVelocity;
     }
 
 

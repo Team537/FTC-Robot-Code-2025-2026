@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.util.ExtraShooterConfig;
+import org.firstinspires.ftc.teamcode.util.TelemetryManager;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.InstantCommand;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.RunCommand;
@@ -14,13 +15,13 @@ import org.firstinspires.ftc.teamcode.util.commandsystem.Subsystem;
 
 import java.util.function.Supplier;
 
-public class ExtraShooterSubsystem extends Subsystem {
+public class ExtraShooterSubsytem extends Subsystem {
     DcMotorEx firstShooterMotor;
 
     DcMotorEx secondShooterMotor;
 
     //Map the name and direction of both shooters
-    public ExtraShooterSubsystem (HardwareMap hardwareMap, ExtraShooterConfig config) {
+    public ExtraShooterSubsytem(HardwareMap hardwareMap, ExtraShooterConfig config) {
         super();
 
         firstShooterMotor = hardwareMap.get(DcMotorEx.class, config.motorName1);
@@ -28,14 +29,21 @@ public class ExtraShooterSubsystem extends Subsystem {
 
         firstShooterMotor.setDirection(config.motorDirection1);
         secondShooterMotor.setDirection(config.motorDirection2);
+
+        firstShooterMotor.setVelocityPIDFCoefficients(1, 0,0,15);
+        secondShooterMotor.setVelocityPIDFCoefficients(1,0,0,15);
     }
 
     //Command for getting the overall velocity of both shooters
     public Command getVelocityCommand(Supplier<Double> velocitySupplier) {
         return new RunCommand(
                 () -> {
-                    firstShooterMotor.setPower(velocitySupplier.get() / Constants.ExtraShooter.MAX_VELOCITY);
-                    secondShooterMotor.setPower(velocitySupplier.get() / Constants.ExtraShooter.MAX_VELOCITY);
+                    double wheelSpeed = velocitySupplier.get();
+                    double ticksPerInch = Constants.ExtraShooter.TICKS_PER_REVOLUTION / Constants.ExtraShooter.WHEEL_CIRCUMFERENCE;
+                    double wheelSpeedsTicksPerSec = wheelSpeed * ticksPerInch;
+
+                    firstShooterMotor.setVelocity(wheelSpeedsTicksPerSec);
+                    secondShooterMotor.setVelocity(wheelSpeedsTicksPerSec);
                 }
         ).withRequirements(this);
     }

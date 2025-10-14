@@ -32,13 +32,18 @@ public class ShooterSubsystem extends Subsystem {
 
         shooterMotor.setDirection(config.motorDirection);
 
+        shooterMotor.setVelocityPIDFCoefficients(1,0,0,15);
     }
 
     //Command to get the Velocity
     public Command getSetVelocityCommand(Supplier<Double> velocitySupplier) {
         return new RunCommand(
                 () -> {
-                    shooterMotor.setPower(velocitySupplier.get() / Constants.Shooter.MAX_VELOCITY);
+                    double wheelSpeed = velocitySupplier.get();
+                    double ticksPerInch = Constants.Shooter.TICKS_PER_REVOLUTION / Constants.Shooter.WHEEL_CIRCUMFERENCE;
+                    double wheelSpeedTicksPerSec = wheelSpeed * ticksPerInch;
+
+                    shooterMotor.setVelocity(wheelSpeedTicksPerSec);
                 }
         ).withRequirements(this);
     }
