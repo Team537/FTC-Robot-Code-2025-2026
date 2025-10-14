@@ -1,26 +1,32 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.subsystems.ExtraShooterSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
-import org.firstinspires.ftc.teamcode.util.MathUtil;
-import org.firstinspires.ftc.teamcode.util.TelemetryManager;
-import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.FunctionalCommand;
-import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.RunCommand;
-import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
-import org.firstinspires.ftc.teamcode.util.geometry.Rotation2d;
-import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.util.ExtraShooterConfig;
+import org.firstinspires.ftc.teamcode.util.ShooterConfig;
 
 public class RobotContainer {
 
     public static RobotContainer instance;
     public OpMode opMode;
 
-    public MecanumDriveSubsystem driveSubsystem;
+   public MecanumDriveSubsystem driveSubsystem;
+
+    public ShooterSubsystem shooterSubsystem;
+
+    public ExtraShooterSubsytem extraShooterSubsytem;
 
     private Gamepad gamepad1;
     private Gamepad gamepad2;
+
+    private ShooterConfig shooterConfig = Constants.Shooter.CONFIG;
+
+    private ExtraShooterConfig extraShooterConfig = Constants.ExtraShooter.CONFIG;
 
     public static RobotContainer getInstance(OpMode opMode) {
         if (instance == null) {
@@ -34,8 +40,12 @@ public class RobotContainer {
 
     private RobotContainer(OpMode opMode) {
         this.opMode = opMode;
-        driveSubsystem = new MecanumDriveSubsystem(opMode.hardwareMap);
-        driveSubsystem.register();
+        //driveSubsystem = new MecanumDriveSubsystem(opMode.hardwareMap);
+        //driveSubsystem.register();
+        //shooterSubsystem = new ShooterSubsystem(opMode.hardwareMap, shooterConfig);
+        //shooterSubsystem.register();
+        extraShooterSubsytem = new ExtraShooterSubsytem(opMode.hardwareMap, extraShooterConfig);
+        extraShooterSubsytem.register();
         bindGamepads(opMode);
     }
 
@@ -53,7 +63,7 @@ public class RobotContainer {
      * schedule all commands for manual control
      */
     public void scheduleTeleOp() {
-        driveSubsystem.setDefaultCommand(
+        /*driveSubsystem.setDefaultCommand(
             driveSubsystem.getDriveVelocityCommand(
 
                 () -> {
@@ -86,6 +96,28 @@ public class RobotContainer {
                 }
 
             )
+        );
+
+
+        shooterSubsystem.setDefaultCommand(
+                shooterSubsystem.getSetVelocityCommand(
+
+                        () -> {
+                            double shooterValue = gamepad1.right_trigger * 50.0;
+                            return shooterValue;
+                        }
+                )
+        );
+
+*/
+        extraShooterSubsytem.setDefaultCommand(
+                extraShooterSubsytem.getVelocityCommand(
+
+                        () -> {
+                            double extraShooterValue = gamepad1.left_trigger * 100;
+                            return extraShooterValue;
+                        }
+                )
         );
 
     }
