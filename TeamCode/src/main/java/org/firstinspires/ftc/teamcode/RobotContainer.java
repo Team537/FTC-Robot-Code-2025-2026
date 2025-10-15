@@ -96,13 +96,13 @@ public class RobotContainer {
         intakeSubsystem.setDefaultCommand(
                 intakeSubsystem.getManualCommand(
                         () -> {
-                            boolean runMotorForward = gamepad1.b;
-                            boolean runMotorBackward = gamepad1.a;
-                            TelemetryManager.put("A Pressed", runMotorBackward);
-                            TelemetryManager.put("B Pressed", runMotorForward);
+                            boolean intakePressed = gamepad1.a;
+                            boolean reversePressed = gamepad1.left_trigger > 0;
+                            TelemetryManager.put("Run Intake", intakePressed);
+                            TelemetryManager.put("Reverse", reversePressed);
 
-                            MotorState determinedState = runMotorForward ? MotorState.Forward : runMotorBackward ? MotorState.Backward : MotorState.AtRest;
-                            TelemetryManager.put("State", determinedState);
+                            MotorState determinedState = intakePressed ? reversePressed ? MotorState.Backward : MotorState.Forward : MotorState.AtRest;
+                            TelemetryManager.put("Intake State", determinedState);
 
                             return determinedState;
                         }
@@ -112,13 +112,13 @@ public class RobotContainer {
         hopperSubsystem.setDefaultCommand(
                 hopperSubsystem.getManualCommand(
                         () -> {
-                            boolean runMotorForward = gamepad1.x;
-                            boolean runMotorBackward = gamepad1.y;
-                            TelemetryManager.put("X Pressed", runMotorForward);
-                            TelemetryManager.put("Y Pressed", runMotorBackward);
+                            boolean hopperPressed = gamepad1.x;
+                            boolean reversePressed = gamepad1.left_trigger > 0;
+                            TelemetryManager.put("Run Hopper", hopperPressed);
+                            TelemetryManager.put("Reverse", reversePressed);
 
-                            MotorState determinedState = runMotorForward ? MotorState.Forward : runMotorBackward ? MotorState.Backward : MotorState.AtRest;
-                            TelemetryManager.put("State", determinedState);
+                            MotorState determinedState = hopperPressed ? reversePressed ? MotorState.Backward : MotorState.Forward : MotorState.AtRest;
+                            TelemetryManager.put("Hopper State", determinedState);
 
                             return determinedState;
                         }
