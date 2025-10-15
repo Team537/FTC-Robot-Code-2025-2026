@@ -141,7 +141,7 @@ public class RobotContainer {
     }
     public void scheduleAuto() {
         TelemetryManager.put("Wheels move", true);
-        ExampleRoutine routine = n ExampleRoutine(this.driveSubsystem, this.hopperSubsystem, this.intakeSubsystem);
+        ExampleRoutine routine = new ExampleRoutine(this.driveSubsystem, this.hopperSubsystem, this.intakeSubsystem);
         routine.getCommand().schedule();
         TelemetryManager.put("wheels stop", true);
     }

@@ -240,5 +240,4 @@ public abstract class Command {
     public static Command continuousStub() {
         return new StubCommand(true);
     }
-
 }
