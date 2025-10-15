@@ -12,7 +12,7 @@ public class Translation2d {
     public double getX() { return x; }
     public double getY() { return y; }
 
-    public double norm() {
+    public double magnitude() {
         return Math.hypot(x, y);
     }
 

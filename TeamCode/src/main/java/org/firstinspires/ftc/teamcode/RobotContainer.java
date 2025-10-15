@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.subsystems.DifferentialDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ExtraShooterSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
@@ -67,8 +68,8 @@ public class RobotContainer {
                     );
 
                     // Clamp translational velocity
-                    if (translationalVelocity.norm() > Constants.Drive.MAX_TRANSLATIONAL_SPEED) {
-                        translationalVelocity = translationalVelocity.div(translationalVelocity.norm()).times(Constants.Drive.MAX_TRANSLATIONAL_SPEED);
+                    if (translationalVelocity.magnitude() > Constants.Drive.MAX_TRANSLATIONAL_SPEED) {
+                        translationalVelocity = translationalVelocity.div(translationalVelocity.magnitude()).times(Constants.Drive.MAX_TRANSLATIONAL_SPEED);
                     }
 
                     // Get the rotational velocity frame the gamepad.
