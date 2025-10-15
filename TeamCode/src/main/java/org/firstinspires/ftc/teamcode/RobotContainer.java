@@ -14,8 +14,8 @@ import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 
 public class RobotContainer {
-
     public static RobotContainer instance;
+
     public OpMode opMode;
 
     public MecanumDriveSubsystem driveSubsystem;
@@ -23,16 +23,20 @@ public class RobotContainer {
     private final MotorSubsystem intakeSubsystem;
 
     private final MotorSubsystem hopperSubsystem;
+
     private Gamepad gamepad1;
+
     private Gamepad gamepad2;
 
     public static RobotContainer getInstance(OpMode opMode) {
         if (instance == null) {
             instance = new RobotContainer(opMode);
         }
+
         if (opMode != instance.opMode) {
             instance.opMode = opMode;
         }
+
         return instance;
     }
 
@@ -63,9 +67,7 @@ public class RobotContainer {
     public void scheduleTeleOp() {
         driveSubsystem.setDefaultCommand(
                 driveSubsystem.getDriveVelocityCommand(
-
                         () -> {
-
                             // Get the translational velocities from the gamepad.
                             // Y is inverted because the gamepad reports "up" on the gamepad as negative, which is opposite to the coordinate frame we are using.
                             Translation2d translationalVelocity = new Translation2d(
@@ -86,19 +88,13 @@ public class RobotContainer {
 //                            rotationalVelocity = MathUtil.clamp(rotationalVelocity, -Constants.Drive.MAX_ROTATIONAL_SPEED, Constants.Drive.MAX_ROTATIONAL_SPEED);
 
                             // Return a value of the combined velocities
-                            return new ChassisVelocity2d(
-                                    translationalVelocity,
-                                    rotationalVelocity
-                            );
-
+                            return new ChassisVelocity2d(translationalVelocity, rotationalVelocity);
                         }
-
                 )
         );
 
         intakeSubsystem.setDefaultCommand(
-                intakeSubsystem.getFeedCommand(
-
+                intakeSubsystem.getManualCommand(
                         () -> {
                             boolean runMotorForward = gamepad1.b;
                             boolean runMotorBackward = gamepad1.a;
@@ -106,20 +102,15 @@ public class RobotContainer {
                             TelemetryManager.put("B Pressed", runMotorForward);
 
                             MotorState determinedState = runMotorForward ? MotorState.Forward : runMotorBackward ? MotorState.Backward : MotorState.AtRest;
-
                             TelemetryManager.put("State", determinedState);
 
-
                             return determinedState;
-
                         }
-
                 )
         );
 
         hopperSubsystem.setDefaultCommand(
-                hopperSubsystem.getFeedCommand(
-
+                hopperSubsystem.getManualCommand(
                         () -> {
                             boolean runMotorForward = gamepad1.x;
                             boolean runMotorBackward = gamepad1.y;
@@ -127,27 +118,18 @@ public class RobotContainer {
                             TelemetryManager.put("Y Pressed", runMotorBackward);
 
                             MotorState determinedState = runMotorForward ? MotorState.Forward : runMotorBackward ? MotorState.Backward : MotorState.AtRest;
-
                             TelemetryManager.put("State", determinedState);
 
-
                             return determinedState;
-
                         }
-
                 )
         );
-
     }
+
     public void scheduleAuto() {
-        TelemetryManager.put("Wheels move", true);
+        TelemetryManager.put("Scheduling Auto", true);
         ExampleRoutine routine = new ExampleRoutine(this.driveSubsystem, this.hopperSubsystem, this.intakeSubsystem);
         routine.getCommand().schedule();
-        TelemetryManager.put("wheels stop", true);
+        TelemetryManager.put("Scheduled Auto", true);
     }
-
-
-
 }
-
-

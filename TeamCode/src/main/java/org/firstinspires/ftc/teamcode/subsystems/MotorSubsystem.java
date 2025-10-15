@@ -15,45 +15,44 @@ import org.firstinspires.ftc.teamcode.util.commandsystem.Subsystem;
 import java.util.function.Supplier;
 
 public class MotorSubsystem extends Subsystem {
-    private final DcMotorEx intakeMotor;
+    private final DcMotorEx motor;
 
     public MotorSubsystem(HardwareMap hardwareMap, String motorName) {
         super();
 
-        // Initialize motors from hardware map
-        intakeMotor = hardwareMap.get(DcMotorEx.class, motorName);
-        intakeMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        this.motor = hardwareMap.get(DcMotorEx.class, motorName);
+        this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
     }
 
-
-
-    public Command getFeedCommand(Supplier<MotorState> motorStateSupplier) {
+    public Command getManualCommand(Supplier<MotorState> motorStateSupplier) {
         return new RunCommand(() -> {
             double power = 0;
             switch (motorStateSupplier.get()) {
                 case Forward: power = 1; break;
                 case Backward: power = -1; break;
             }
-            this.intakeMotor.setPower(power);
+
+            this.motor.setPower(power);
             TelemetryManager.put("power", power);
         }).withRequirements(this);
-
     }
 
-    public Command getRunForTime(double seconds, MotorState motorState) {
-       return new SequentialCommandGroup(
-         new RunCommand(() -> {
-            double power = 0;
-            switch (motorState) {
-                case Forward: power = 1; break;
-                case Backward: power = -1; break;
-            }
-            this.intakeMotor.setPower(power);
-            TelemetryManager.put("power", power);
-        }).withRequirements(this),
-         new WaitCommand(seconds),
-         new RunCommand (() -> {
-              this.intakeMotor.setPower(0);
-         }));
+    public Command getRunForTimeCommand(double seconds, MotorState motorState) {
+        return new SequentialCommandGroup(
+            new RunCommand(() -> {
+                double power = 0;
+                switch (motorState) {
+                    case Forward: power = 1; break;
+                    case Backward: power = -1; break;
+                }
+
+                this.motor.setPower(power);
+                TelemetryManager.put("power", power);
+            }).withRequirements(this),
+            new WaitCommand(seconds),
+            new RunCommand (() -> {
+                this.motor.setPower(0);
+            })
+        );
     }
 }
