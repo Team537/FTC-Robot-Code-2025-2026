@@ -1,9 +1,9 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import org.firstinspires.ftc.teamcode.util.math.MathUtil;
-import org.firstinspires.ftc.teamcode.util.math.PIDController;
 import org.firstinspires.ftc.teamcode.util.math.RateLimiter;
 import org.firstinspires.ftc.teamcode.util.math.RateLimiter2d;
+import org.firstinspires.ftc.teamcode.util.math.PIDFController;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.Groups.ParallelCommandGroup;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.RunCommand;
@@ -18,7 +18,7 @@ import java.util.function.Supplier;
  * Abstract base class for any holonomic (e.g., mecanum or omniwheel) drivetrain.
  * Provides:
  * - Separate translational and rotational subsystems
- * - PID-controlled driving to positions
+ * - PIDF-controlled driving to positions
  * - Velocity-based commands for driving
  * - Field-relative drive support
  */
@@ -65,9 +65,9 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
     }
 
     /** PID controllers for X, Y translation and rotation */
-    private PIDController xController = new PIDController(0.0, 0.0, 0.0);
-    private PIDController yController = new PIDController(0.0, 0.0, 0.0);
-    private PIDController thetaController = new PIDController(0.0, 0.0, 0.0);
+    private PIDFController xController;
+    private PIDFController yController;
+    private PIDFController thetaController;
 
     /** Rate Limiters for limiting robot acceleration to prevent wheel slip */
     private RateLimiter2d translationalAccelerationLimiter = new RateLimiter2d(translationalSubsystem.getTranslationalVelocity(),1.0,0.5);
@@ -202,7 +202,7 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
 
     // ---------------- DRIVE ----------------
 
-    /** Command to drive to a dynamic pose using PID controllers */
+    /** Command to drive to a dynamic pose using PIDF controllers */
     public Command getDriveToPoseCommand(Supplier<Pose2d> poseSupplier) {
         return new ParallelCommandGroup(
             getDriveToTranslationCommand(() -> poseSupplier.get().getTranslation()),
@@ -210,14 +210,14 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
         );
     }
 
-    /** Command to drive to a fixed pose using PID controllers */
+    /** Command to drive to a fixed pose using PIDF controllers */
     public Command getDriveToPoseCommand(Pose2d target) {
         return getDriveToPoseCommand(() -> target);
     }
 
     // ---------------- TRANSLATIONAL ----------------
 
-    /** Command to drive translationally to a dynamic target using PID */
+    /** Command to drive translationally to a dynamic target using PIDF */
     public Command getDriveToTranslationCommand(Supplier<Translation2d> translationSupplier) {
         return getDriveTranslationalVelocity(
             () -> new Translation2d(
@@ -229,14 +229,14 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
         );
     }
 
-    /** Command to drive translationally to a fixed target using PID */
+    /** Command to drive translationally to a fixed target using PIDF */
     public Command getDriveToTranslationCommand(Translation2d target) {
         return getDriveToTranslationCommand(() -> target);
     }
 
     // ---------------- ROTATIONAL ----------------
 
-    /** Command to drive rotationally to a dynamic target using PID */
+    /** Command to drive rotationally to a dynamic target using PIDF */
     public Command getDriveToRotationCommand(Supplier<Double> rotationRadiansSupplier) {
         return getDriveRotationalVelocity(
             () -> thetaController.calculate(getRobotPose().getRotation().getRadians(),
@@ -244,7 +244,7 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
         );
     }
 
-    /** Command to drive rotationally to a fixed target using PID */
+    /** Command to drive rotationally to a fixed target using PIDF */
     public Command getDriveToRotationCommand(double targetRadians) {
         return getDriveToRotationCommand(() -> targetRadians);
     }

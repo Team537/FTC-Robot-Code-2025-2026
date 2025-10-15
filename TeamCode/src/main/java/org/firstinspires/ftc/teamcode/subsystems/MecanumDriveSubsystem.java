@@ -162,17 +162,18 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
         // Update pose estimator with distances + IMU heading
         mecanumPoseEstimator.update(currentPositionInches, getIMUHeading());
 
-        // Apply new pose to the subsystem
-        setRobotPose(mecanumPoseEstimator.getEstimatedPose());
-    }
-
-    /** Set robot pose manually (e.g., for odometry reset) */
-    public void setRobotPose(Pose2d pose) {
-        mecanumPoseEstimator.resetPose(pose, getIMUHeading());
     }
 
     /** Get the current robot pose */
     public Pose2d getRobotPose() {
         return mecanumPoseEstimator.getEstimatedPose();
+    }
+
+    /**
+     * Resets the robot pose
+     * @param pose The pose to reset to
+     */
+    public void setRobotPose(Pose2d pose) {
+        mecanumPoseEstimator.resetPose(pose,getIMUHeading());
     }
 }
