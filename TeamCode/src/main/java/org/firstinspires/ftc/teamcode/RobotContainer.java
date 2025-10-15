@@ -1,16 +1,17 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.subsystems.DifferentialDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ExtraShooterSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
+import org.firstinspires.ftc.teamcode.util.ExtraShooterConfig;
 import org.firstinspires.ftc.teamcode.util.MathUtil;
-import org.firstinspires.ftc.teamcode.util.TelemetryManager;
-import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.FunctionalCommand;
-import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.RunCommand;
+import org.firstinspires.ftc.teamcode.util.ShooterConfig;
 import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
-import org.firstinspires.ftc.teamcode.util.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 
 public class RobotContainer {
@@ -18,7 +19,7 @@ public class RobotContainer {
     public static RobotContainer instance;
     public OpMode opMode;
 
-    public MecanumDriveSubsystem driveSubsystem;
+   public MecanumDriveSubsystem driveSubsystem;
 
     private Gamepad gamepad1;
     private Gamepad gamepad2;
@@ -35,8 +36,8 @@ public class RobotContainer {
 
     private RobotContainer(OpMode opMode) {
         this.opMode = opMode;
-        driveSubsystem = new MecanumDriveSubsystem(opMode.hardwareMap);
-        driveSubsystem.register();
+        //driveSubsystem = new MecanumDriveSubsystem(opMode.hardwareMap);
+        //driveSubsystem.register();
         bindGamepads(opMode);
     }
 
