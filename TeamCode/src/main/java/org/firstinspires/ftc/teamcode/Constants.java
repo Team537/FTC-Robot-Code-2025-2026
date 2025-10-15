@@ -60,6 +60,8 @@ public class Constants {
         public static final double WHEEL_DIAMETER_INCHES = 3;
         public static final double TICKS_PER_REV = 7;
 
+    }
+
     public static class Shooter {
 
         public static final String SHOOTER_NAME = "shooter";
