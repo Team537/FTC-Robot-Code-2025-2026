@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.util.MecanumDriveKinematics;
+import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 
 public class Constants {
 
@@ -38,6 +39,24 @@ public class Constants {
         public static final double MAX_TRANSLATIONAL_SPEED = 50; // inches per second
         public static final double MAX_ROTATIONAL_SPEED = (MAX_TRANSLATIONAL_SPEED) / (WHEEL_BASE / 2.0 + TRACK_WIDTH / 2.0);
         public static final double MAX_WHEEL_SPEED = MAX_TRANSLATIONAL_SPEED * Math.sqrt(2.0);
+
+    }
+
+    public static class DifferentialDrive {
+
+        public static final String LEFT_MOTOR_NAME = "leftMotor";
+        public static final String RIGHT_MOTOR_NAME = "rightMotor";
+
+        public static final DcMotorSimple.Direction LEFT_MOTOR_DIRECTION = DcMotorSimple.Direction.FORWARD;
+        public static final DcMotorSimple.Direction RIGHT_MOTOR_DIRECTION = DcMotorSimple.Direction.REVERSE;
+
+        public static final double TRACK_WIDTH = 10;
+        public static final Translation2d PIVOT_OFFSET = new Translation2d(
+            0.0,
+            0.0
+        );
+        public static final double WHEEL_DIAMETER_INCHES = 3;
+        public static final double TICKS_PER_REV = 7;
 
     }
 

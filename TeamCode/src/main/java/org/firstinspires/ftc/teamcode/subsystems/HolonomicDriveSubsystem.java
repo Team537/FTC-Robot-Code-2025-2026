@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import org.firstinspires.ftc.teamcode.util.PIDController;
+import org.firstinspires.ftc.teamcode.util.PIDFController;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.Groups.ParallelCommandGroup;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.RunCommand;
@@ -16,7 +16,7 @@ import java.util.function.Supplier;
  * Abstract base class for any holonomic (e.g., mecanum or omniwheel) drivetrain.
  * Provides:
  * - Separate translational and rotational subsystems
- * - PID-controlled driving to positions
+ * - PIDF-controlled driving to positions
  * - Velocity-based commands for driving
  * - Field-relative drive support
  */
@@ -65,12 +65,12 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
     /** Current pose of the robot in field coordinates */
     private Pose2d robotPose = new Pose2d(new Translation2d(0.0, 0.0),new Rotation2d(0.0));
 
-    /** PID controllers for X, Y translation and rotation */
-    private PIDController xController = new PIDController(0.0, 0.0, 0.0);
-    private PIDController yController = new PIDController(0.0, 0.0, 0.0);
-    private PIDController thetaController = new PIDController(0.0, 0.0, 0.0);
+    /** PIDF controllers for X, Y translation and rotation */
+    private PIDFController xController = new PIDFController(0.0, 0.0, 0.0);
+    private PIDFController yController = new PIDFController(0.0, 0.0, 0.0);
+    private PIDFController thetaController = new PIDFController(0.0, 0.0, 0.0);
 
-    /** Constructor initializes subsystems and enables continuous input for rotation PID */
+    /** Constructor initializes subsystems and enables continuous input for rotation PIDF */
     public HolonomicDriveSubsystem() {
         thetaController.enableContinuousInput(-Math.PI, Math.PI);
         translationalSubsystem = new TranslationalSubsystem();
@@ -167,7 +167,7 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
 
     // ---------------- DRIVE ----------------
 
-    /** Command to drive to a dynamic pose using PID controllers */
+    /** Command to drive to a dynamic pose using PIDF controllers */
     public Command getDriveToPoseCommand(Supplier<Pose2d> poseSupplier) {
         return new ParallelCommandGroup(
             getDriveToTranslationCommand(() -> poseSupplier.get().getTranslation()),
@@ -175,14 +175,14 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
         );
     }
 
-    /** Command to drive to a fixed pose using PID controllers */
+    /** Command to drive to a fixed pose using PIDF controllers */
     public Command getDriveToPoseCommand(Pose2d target) {
         return getDriveToPoseCommand(() -> target);
     }
 
     // ---------------- TRANSLATIONAL ----------------
 
-    /** Command to drive translationally to a dynamic target using PID */
+    /** Command to drive translationally to a dynamic target using PIDF */
     public Command getDriveToTranslationCommand(Supplier<Translation2d> translationSupplier) {
         return getDriveTranslationalVelocity(
             () -> new Translation2d(
@@ -194,14 +194,14 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
         );
     }
 
-    /** Command to drive translationally to a fixed target using PID */
+    /** Command to drive translationally to a fixed target using PIDF */
     public Command getDriveToTranslationCommand(Translation2d target) {
         return getDriveToTranslationCommand(() -> target);
     }
 
     // ---------------- ROTATIONAL ----------------
 
-    /** Command to drive rotationally to a dynamic target using PID */
+    /** Command to drive rotationally to a dynamic target using PIDF */
     public Command getDriveToRotationCommand(Supplier<Double> rotationRadiansSupplier) {
         return getDriveRotationalVelocity(
             () -> thetaController.calculate(getRobotPose().getRotation().getRadians(),
@@ -209,7 +209,7 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
         );
     }
 
-    /** Command to drive rotationally to a fixed target using PID */
+    /** Command to drive rotationally to a fixed target using PIDF */
     public Command getDriveToRotationCommand(double targetRadians) {
         return getDriveToRotationCommand(() -> targetRadians);
     }
