@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.util.MecanumDriveKinematics;
+import org.firstinspires.ftc.teamcode.util.mecanum.MecanumDriveKinematics;
 
 public class Constants {
 

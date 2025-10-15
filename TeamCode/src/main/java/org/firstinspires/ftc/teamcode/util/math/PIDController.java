@@ -1,6 +1,4 @@
-package org.firstinspires.ftc.teamcode.util;
-
-import org.firstinspires.ftc.teamcode.util.DeltaTime;
+package org.firstinspires.ftc.teamcode.util.math;
 
 public class PIDController {
     private double kP, kI, kD;

@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Constants;
-import org.firstinspires.ftc.teamcode.util.MecanumPoseEstimator;
+import org.firstinspires.ftc.teamcode.util.mecanum.MecanumDriveConfig;
+import org.firstinspires.ftc.teamcode.util.mecanum.MecanumPoseEstimator;
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
 import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Pose2d;
@@ -25,6 +26,8 @@ import java.util.Arrays;
  */
 public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
 
+    private MecanumDriveConfig config;
+
     // ---------------- MOTORS ----------------
     private DcMotorEx frontLeftMotor;
     private DcMotorEx frontRightMotor;
@@ -35,34 +38,34 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
     private IMU imu;
 
     // ---------------- ODOMETRY ----------------
-    private MecanumPoseEstimator mecanumPoseEstimator =
-        new MecanumPoseEstimator(Constants.Drive.KINEMATICS, Pose2d.ZERO);
+    private MecanumPoseEstimator mecanumPoseEstimator;
 
     /**
      * Constructor: initializes motors, IMU, and odometry
      */
-    public MecanumDriveSubsystem(HardwareMap hardwareMap) {
+    public MecanumDriveSubsystem(MecanumDriveConfig config, HardwareMap hardwareMap) {
         super();
 
         // Initialize motors from hardware map
-        frontLeftMotor = hardwareMap.get(DcMotorEx.class, Constants.Drive.FRONT_LEFT_MOTOR_NAME);
-        frontRightMotor = hardwareMap.get(DcMotorEx.class, Constants.Drive.FRONT_RIGHT_MOTOR_NAME);
-        backLeftMotor = hardwareMap.get(DcMotorEx.class, Constants.Drive.BACK_LEFT_MOTOR_NAME);
-        backRightMotor = hardwareMap.get(DcMotorEx.class, Constants.Drive.BACK_RIGHT_MOTOR_NAME);
+        frontLeftMotor = hardwareMap.get(DcMotorEx.class, config.frontLeftMotorName);
+        frontRightMotor = hardwareMap.get(DcMotorEx.class, config.frontRightMotorName);
+        backLeftMotor = hardwareMap.get(DcMotorEx.class, config.backLeftMotorName);
+        backRightMotor = hardwareMap.get(DcMotorEx.class, config.backRightMotorName);
 
         // Set motor directions according to configuration constants
-        frontLeftMotor.setDirection(Constants.Drive.FRONT_LEFT_MOTOR_DIRECTION);
-        frontRightMotor.setDirection(Constants.Drive.FRONT_RIGHT_MOTOR_DIRECTION);
-        backLeftMotor.setDirection(Constants.Drive.BACK_LEFT_MOTOR_DIRECTION);
-        backRightMotor.setDirection(Constants.Drive.BACK_RIGHT_MOTOR_DIRECTION);
+        frontLeftMotor.setDirection(config.frontLeftDirection);
+        frontRightMotor.setDirection(config.frontRightDirection);
+        backLeftMotor.setDirection(config.backLeftDirection);
+        backRightMotor.setDirection(config.backRightDirection);
 
         // Initialize IMU
-        imu = hardwareMap.get(IMU.class, Constants.Drive.IMU_NAME);
+        imu = hardwareMap.get(IMU.class, config.imuName);
 
         // Force reading to initialize
         imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-        // Reset odometry to origin
+        // Setup odometry
+        mecanumPoseEstimator = new MecanumPoseEstimator(config.kinematics, Pose2d.ZERO);
         mecanumPoseEstimator.resetPose(Pose2d.ZERO, getIMUHeading());
     }
 
@@ -94,7 +97,8 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
     public void setMotors(ChassisVelocity2d chassisVelocity) {
 
         // Convert chassis velocity to individual wheel speeds
-        double[] wheelSpeeds = Constants.Drive.KINEMATICS.toWheelSpeeds(chassisVelocity);
+        // Convert to field relative first
+        double[] wheelSpeeds = config.kinematics.toWheelSpeeds(chassisVelocity.toRobotRelative(getRobotPose().getRotation()));
 
         // Proportional scaling: prevent wheel speed from exceeding max
         double max = Arrays.stream(wheelSpeeds).map(Math::abs).max().orElse(0.0);

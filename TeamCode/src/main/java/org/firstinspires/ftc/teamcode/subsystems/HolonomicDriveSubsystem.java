@@ -1,13 +1,15 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import org.firstinspires.ftc.teamcode.util.PIDController;
+import org.firstinspires.ftc.teamcode.util.math.MathUtil;
+import org.firstinspires.ftc.teamcode.util.math.PIDController;
+import org.firstinspires.ftc.teamcode.util.math.RateLimiter;
+import org.firstinspires.ftc.teamcode.util.math.RateLimiter2d;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.Groups.ParallelCommandGroup;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.RunCommand;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Subsystem;
 import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Pose2d;
-import org.firstinspires.ftc.teamcode.util.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 
 import java.util.function.Supplier;
@@ -62,13 +64,17 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
         }
     }
 
-    /** Current pose of the robot in field coordinates */
-    private Pose2d robotPose = new Pose2d(new Translation2d(0.0, 0.0),new Rotation2d(0.0));
-
     /** PID controllers for X, Y translation and rotation */
     private PIDController xController = new PIDController(0.0, 0.0, 0.0);
     private PIDController yController = new PIDController(0.0, 0.0, 0.0);
     private PIDController thetaController = new PIDController(0.0, 0.0, 0.0);
+
+    /** Rate Limiters for limiting robot acceleration to prevent wheel slip */
+    private RateLimiter2d translationalAccelerationLimiter = new RateLimiter2d(translationalSubsystem.getTranslationalVelocity(),1.0,0.5);
+    private RateLimiter rotationalAccelerationLimiter = new RateLimiter(rotationalSubsystem.getRotationalVelocity(),1.0,0.5);
+
+    private double maxTranslationalSpeed;
+    private double maxRotationalSpeed;
 
     /** Constructor initializes subsystems and enables continuous input for rotation PID */
     public HolonomicDriveSubsystem() {
@@ -78,17 +84,46 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
     }
 
     /**
-     * Periodic update called by scheduler.
-     * Combines translational and rotational velocities into a chassis velocity,
-     * applies field-relative rotation, sets motors, and updates odometry.
+     * Periodic update called by the scheduler.
+     * <p>
+     * This method:
+     * <ol>
+     *   <li>Reads desired translational and rotational velocities from their subsystems.</li>
+     *   <li>Applies acceleration limiting (rate limiters).</li>
+     *   <li>Caps the magnitudes of translational and rotational velocities to their maximum values.</li>
+     *   <li>Builds a {@link ChassisVelocity2d} object from the limited values.</li>
+     *   <li>Sends wheel speeds to motors.</li>
+     *   <li>Updates odometry using encoder + IMU measurements.</li>
+     * </ol>
      */
     @Override
     public void periodic() {
-        ChassisVelocity2d targetVelocity = new ChassisVelocity2d(
-            translationalSubsystem.getTranslationalVelocity().rotateBy(getRobotPose().getRotation()),
-            rotationalSubsystem.getRotationalVelocity()
+
+        // Get the desired velocities from subsystems and apply rate limiting
+        Translation2d limitedTranslation =
+            translationalAccelerationLimiter.update(translationalSubsystem.getTranslationalVelocity());
+        double limitedRotation =
+            rotationalAccelerationLimiter.update(rotationalSubsystem.getRotationalVelocity());
+
+        // Cap the translational speed to the robot's max
+        if (limitedTranslation.magnitude() > maxTranslationalSpeed) {
+            limitedTranslation = limitedTranslation.withMagnitude(maxTranslationalSpeed);
+        }
+
+        // Cap the rotational speed to the robot's max
+        limitedRotation = MathUtil.clamp(
+            limitedRotation,
+            -maxRotationalSpeed,
+            maxRotationalSpeed
         );
+
+        // Combine capped translation + rotation into chassis velocity
+        ChassisVelocity2d targetVelocity = new ChassisVelocity2d(limitedTranslation, limitedRotation);
+
+        // Send velocities to the drivetrain motors
         setMotors(targetVelocity);
+
+        // Update robot odometry
         updateOdometry();
     }
 
