@@ -29,7 +29,7 @@ public class Constants {
         public static final double WHEEL_BASE = 14.25;
         public static final double TRACK_WIDTH = 17.50;
         public static final MecanumDriveKinematics KINEMATICS = new MecanumDriveKinematics(WHEEL_BASE, TRACK_WIDTH);
-        public static final double WHEEL_CIRCUMFERENCE = (2.0 * Math.PI) * 4.0;
+        public static final double WHEEL_CIRCUMFERENCE = (2.0 * Math.PI) * 2.0;
 
         public static final double GEAR_RATIO = 19.2;
         public static final double ENCODER_PULSE_PER_REVOLUTION = 7.0;

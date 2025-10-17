@@ -97,7 +97,7 @@ public class RobotContainer {
                 intakeSubsystem.getManualCommand(
                         () -> {
                             boolean intakePressed = gamepad1.a;
-                            boolean reversePressed = gamepad1.left_trigger > 0;
+                            boolean reversePressed = gamepad1.left_trigger <= 0;
                             TelemetryManager.put("Run Intake", intakePressed);
                             TelemetryManager.put("Reverse", reversePressed);
 
