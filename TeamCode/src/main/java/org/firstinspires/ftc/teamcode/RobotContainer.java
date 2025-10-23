@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.subsystems.DifferentialDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ExtraShooterSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.util.DifferentialDriveConfig;
 import org.firstinspires.ftc.teamcode.util.math.MathUtil;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.util.ExtraShooterConfig;
@@ -14,13 +15,14 @@ import org.firstinspires.ftc.teamcode.util.math.MathUtil;
 import org.firstinspires.ftc.teamcode.util.ShooterConfig;
 import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
+import org.firstinspires.ftc.teamcode.util.mecanum.MecanumDriveConfig;
 
 public class RobotContainer {
 
     public static RobotContainer instance;
     public OpMode opMode;
 
-   public MecanumDriveSubsystem driveSubsystem;
+   public DifferentialDriveSubsystem driveSubsystem;
 
     private Gamepad gamepad1;
     private Gamepad gamepad2;
@@ -37,8 +39,8 @@ public class RobotContainer {
 
     private RobotContainer(OpMode opMode) {
         this.opMode = opMode;
-        //driveSubsystem = new MecanumDriveSubsystem(opMode.hardwareMap);
-        //driveSubsystem.register();
+        driveSubsystem = new DifferentialDriveSubsystem(opMode.hardwareMap, Constants.DifferentialDrive.DIFFERENTIAL_DRIVE_CONFIG);
+        driveSubsystem.register();
         bindGamepads(opMode);
     }
 

@@ -1,9 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
+import org.firstinspires.ftc.teamcode.util.HolonomicDriveConfig;
 import org.firstinspires.ftc.teamcode.util.math.MathUtil;
+import org.firstinspires.ftc.teamcode.util.math.PIDFController;
 import org.firstinspires.ftc.teamcode.util.math.RateLimiter;
 import org.firstinspires.ftc.teamcode.util.math.RateLimiter2d;
-import org.firstinspires.ftc.teamcode.util.math.PIDFController;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.Groups.ParallelCommandGroup;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.RunCommand;
@@ -70,17 +71,27 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
     private PIDFController thetaController;
 
     /** Rate Limiters for limiting robot acceleration to prevent wheel slip */
-    private RateLimiter2d translationalAccelerationLimiter = new RateLimiter2d(translationalSubsystem.getTranslationalVelocity(),1.0,0.5);
-    private RateLimiter rotationalAccelerationLimiter = new RateLimiter(rotationalSubsystem.getRotationalVelocity(),1.0,0.5);
+    private RateLimiter2d translationalAccelerationLimiter;
+    private RateLimiter rotationalAccelerationLimiter;
 
-    private double maxTranslationalSpeed;
-    private double maxRotationalSpeed;
+    private double maxTranslationalSpeed = 6.0;
+    private double maxRotationalSpeed = 6.0;
 
     /** Constructor initializes subsystems and enables continuous input for rotation PID */
-    public HolonomicDriveSubsystem() {
-        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+    public HolonomicDriveSubsystem(HolonomicDriveConfig config) {
         translationalSubsystem = new TranslationalSubsystem();
         rotationalSubsystem = new RotationalSubsystem();
+
+        xController = new PIDFController(config.translationalPID);
+        yController = new PIDFController(config.translationalPID);
+        thetaController = new PIDFController(config.rotationalPID);
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+
+        maxTranslationalSpeed = config.maxTranslationalSpeed;
+        maxRotationalSpeed = config.maxRotationalSpeed;
+
+        translationalAccelerationLimiter = new RateLimiter2d(translationalSubsystem.getTranslationalVelocity(),config.maxTranslationalAccel,0.5);
+        rotationalAccelerationLimiter = new RateLimiter(rotationalSubsystem.getRotationalVelocity(),config.maxRotationalAccel,0.5);
     }
 
     /**

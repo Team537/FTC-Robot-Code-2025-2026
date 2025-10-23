@@ -1,76 +1,126 @@
 package org.firstinspires.ftc.teamcode.util.mecanum;
 
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import org.firstinspires.ftc.teamcode.util.math.PIDFCoefficients;
 import org.firstinspires.ftc.teamcode.util.mecanum.MecanumDriveKinematics;
-
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 public class MecanumDriveConfig {
 
-    // Motor info
-    public final String frontLeftMotorName;
-    public final String frontRightMotorName;
-    public final String backLeftMotorName;
-    public final String backRightMotorName;
+    // --- Kinematics ---
+    public MecanumDriveKinematics kinematics;
+    public double wheelCircumference = 0.0;
+    public double ticksPerRevolution = 0.0;
 
-    public final DcMotorEx.Direction frontLeftDirection;
-    public final DcMotorEx.Direction frontRightDirection;
-    public final DcMotorEx.Direction backLeftDirection;
-    public final DcMotorEx.Direction backRightDirection;
+    // --- Controllers ---
+    public PIDFCoefficients translationalPID = new PIDFCoefficients();
+    public PIDFCoefficients rotationalPID = new PIDFCoefficients();
+    public PIDFCoefficients motorVelocityPID = new PIDFCoefficients();
 
-    // Wheel / encoder info
-    public final double wheelRadius;        // inches
-    public final double gearRatio;          // motor -> wheel
-    public final double encoderTicksPerRev; // motor encoder ticks per revolution
+    // --- Motors ---
+    public String frontLeftMotorName;
+    public String frontRightMotorName;
+    public String backLeftMotorName;
+    public String backRightMotorName;
 
-    // Robot dimensions for kinematics
-    public final double wheelBase;  // front-back distance (inches)
-    public final double trackWidth; // left-right distance (inches)
+    public DcMotorSimple.Direction frontLeftMotorDirection;
+    public DcMotorSimple.Direction frontRightMotorDirection;
+    public DcMotorSimple.Direction backLeftMotorDirection;
+    public DcMotorSimple.Direction backRightMotorDirection;
 
-    // Kinematics object
-    public final MecanumDriveKinematics kinematics;
+    // --- IMU ---
+    public String imuName;
+    public boolean imuInverted = false;
 
-    // IMU orientation / mounting
-    public final String imuName;
-    public final RevHubOrientationOnRobot hubOrientation; // radians to adjust if IMU is mounted rotated
+    // --- Physical constants ---
+    public double maxWheelSpeed = 0.0;
+    public double maxTranslationalSpeed = 0.0;
+    public double maxRotationalSpeed = 0.0;
+    public double maxTranslationalAccel = 0.0;
+    public double maxRotationalAccel = 0.0;
 
-    // Optional: max speeds & acceleration limits
-    public final double maxTranslationalSpeed; // inches/sec
-    public final double maxRotationalSpeed;    // radians/sec
+    // --- Fluent setters ---
+    public MecanumDriveConfig setKinematics(MecanumDriveKinematics k) {
+        this.kinematics = k;
+        return this;
+    }
 
-    public MecanumDriveConfig(
-        String flName, String frName, String blName, String brName,
-        DcMotorEx.Direction flDir, DcMotorEx.Direction frDir,
-        DcMotorEx.Direction blDir, DcMotorEx.Direction brDir,
-        double wheelRadius, double gearRatio, double encoderTicksPerRev,
-        double wheelBase, double trackWidth,
-        String imuName,
-        RevHubOrientationOnRobot hubOrientation,
-        double maxTranslationalSpeed, double maxRotationalSpeed
-    ) {
-        this.frontLeftMotorName = flName;
-        this.frontRightMotorName = frName;
-        this.backLeftMotorName = blName;
-        this.backRightMotorName = brName;
+    public MecanumDriveConfig setWheelCircumference(double c) {
+        this.wheelCircumference = c;
+        return this;
+    }
 
-        this.frontLeftDirection = flDir;
-        this.frontRightDirection = frDir;
-        this.backLeftDirection = blDir;
-        this.backRightDirection = brDir;
+    public MecanumDriveConfig setTicksPerRevolution(double tpr) {
+        this.ticksPerRevolution = tpr;
+        return this;
+    }
 
-        this.wheelRadius = wheelRadius;
-        this.gearRatio = gearRatio;
-        this.encoderTicksPerRev = encoderTicksPerRev;
+    public MecanumDriveConfig setTranslationalPID(PIDFCoefficients pid) {
+        this.translationalPID = pid;
+        return this;
+    }
 
-        this.wheelBase = wheelBase;
-        this.trackWidth = trackWidth;
+    public MecanumDriveConfig setRotationalPID(PIDFCoefficients pid) {
+        this.rotationalPID = pid;
+        return this;
+    }
 
-        this.kinematics = new MecanumDriveKinematics(wheelBase, trackWidth);
+    public MecanumDriveConfig setMotorVelocityPID(PIDFCoefficients pid) {
+        this.motorVelocityPID = pid;
+        return this;
+    }
 
-        this.imuName = imuName;
-        this.hubOrientation = hubOrientation;
+    public MecanumDriveConfig setFrontLeftMotor(String name, DcMotorSimple.Direction dir) {
+        this.frontLeftMotorName = name;
+        this.frontLeftMotorDirection = dir;
+        return this;
+    }
 
-        this.maxTranslationalSpeed = maxTranslationalSpeed;
-        this.maxRotationalSpeed = maxRotationalSpeed;
+    public MecanumDriveConfig setFrontRightMotor(String name, DcMotorSimple.Direction dir) {
+        this.frontRightMotorName = name;
+        this.frontRightMotorDirection = dir;
+        return this;
+    }
+
+    public MecanumDriveConfig setBackLeftMotor(String name, DcMotorSimple.Direction dir) {
+        this.backLeftMotorName = name;
+        this.backLeftMotorDirection = dir;
+        return this;
+    }
+
+    public MecanumDriveConfig setBackRightMotor(String name, DcMotorSimple.Direction dir) {
+        this.backRightMotorName = name;
+        this.backRightMotorDirection = dir;
+        return this;
+    }
+
+    public MecanumDriveConfig setIMU(String name, boolean inverted) {
+        this.imuName = name;
+        this.imuInverted = inverted;
+        return this;
+    }
+
+    public MecanumDriveConfig setMaxWheelSpeed(double s) {
+        this.maxWheelSpeed = s;
+        return this;
+    }
+
+    public MecanumDriveConfig setMaxTranslationalSpeed(double s) {
+        this.maxTranslationalSpeed = s;
+        return this;
+    }
+
+    public MecanumDriveConfig setMaxRotationalSpeed(double s) {
+        this.maxRotationalSpeed = s;
+        return this;
+    }
+
+    public MecanumDriveConfig setMaxTranslationalAccel(double a) {
+        this.maxTranslationalAccel = a;
+        return this;
+    }
+
+    public MecanumDriveConfig setMaxRotationalAccel(double a) {
+        this.maxRotationalAccel = a;
+        return this;
     }
 }

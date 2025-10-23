@@ -1,10 +1,6 @@
-<<<<<<<< HEAD:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/util/math/PIDController.java
 package org.firstinspires.ftc.teamcode.util.math;
-========
-package org.firstinspires.ftc.teamcode.util;
 
 import java.util.function.Supplier;
->>>>>>>> dev:TeamCode/src/main/java/org/firstinspires/ftc/teamcode/util/PIDFController.java
 
 /**
  * PIDFController — A PID controller with optional feedforward term.
