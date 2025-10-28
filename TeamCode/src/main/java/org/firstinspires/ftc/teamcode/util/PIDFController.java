@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util.math;
+package org.firstinspires.ftc.teamcode.util;
 
 import java.util.function.Supplier;
 

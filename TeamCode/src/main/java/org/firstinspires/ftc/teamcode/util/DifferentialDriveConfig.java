@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.util.math.PIDFCoefficients;
-
 public class DifferentialDriveConfig {
 
     // --- Kinematics ---
