@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.util.DifferentialDriveConfig;
 import org.firstinspires.ftc.teamcode.util.DifferentialPoseEstimator;
-import org.firstinspires.ftc.teamcode.util.PIDFController;
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.RunCommand;
@@ -17,6 +16,8 @@ import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
+import org.firstinspires.ftc.teamcode.util.math.PIDFController;
+import org.firstinspires.ftc.teamcode.util.math.RateLimiter;
 
 import java.util.function.Supplier;
 
@@ -32,12 +33,16 @@ public class DifferentialDriveSubsystem extends Subsystem {
     private final DifferentialPoseEstimator differentialPoseEstimator;
 
     // Conversion factor: motor encoder ticks → inches/sec
-    private final double inchesPerSecondPerTick;
+    private final double inchesPerTick;
 
     private ChassisVelocity2d targetVelocity = new ChassisVelocity2d(Translation2d.ZERO,0.0);
 
-    private PIDFController translationalController = new PIDFController(0.0,0.0,0.0);
-    private PIDFController rotationalController = new PIDFController(0.0,0.0,0.0);
+    private PIDFController translationalController;
+    private PIDFController rotationalController;
+
+    private RateLimiter translationalAccelerationLimiter;
+    private RateLimiter rotationalAccelerationLimiter;
+
 
     private boolean imuInverted;
 
@@ -48,6 +53,12 @@ public class DifferentialDriveSubsystem extends Subsystem {
         leftMotor.setDirection(config.leftMotorDirection);
         rightMotor.setDirection(config.rightMotorDirection);
 
+        translationalController = new PIDFController(config.translationalPID);
+        rotationalController = new PIDFController(config.rotationalPID);
+
+        translationalAccelerationLimiter = new RateLimiter(0.0,config.maxTranslationalAccel,0.5);
+        rotationalAccelerationLimiter = new RateLimiter(0.0,config.maxRotationalAccel,0.5);
+
         leftMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
         rightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
 
@@ -56,7 +67,7 @@ public class DifferentialDriveSubsystem extends Subsystem {
 
         // Calculate conversion: ticks/sec → inches/sec
         double wheelCircumference = config.wheelCircumference;
-        this.inchesPerSecondPerTick = wheelCircumference / config.ticksPerRevolution;
+        this.inchesPerTick = wheelCircumference / config.ticksPerRevolution;
 
         rotationalController.enableContinuousInput(-Math.PI,Math.PI);
 
@@ -82,7 +93,17 @@ public class DifferentialDriveSubsystem extends Subsystem {
 
     @Override
     public void periodic() {
-        setMotors(targetVelocity);
+
+        ChassisVelocity2d velocity =
+            new ChassisVelocity2d(
+                new Translation2d(
+                    translationalAccelerationLimiter.update(targetVelocity.getTranslationalVelocity().getX()),
+                    0.0
+                ),
+                rotationalAccelerationLimiter.update(targetVelocity.getRotationalVelocity())
+            );
+
+        setMotors(velocity);
         updateOdometry();
     }
 
@@ -98,8 +119,8 @@ public class DifferentialDriveSubsystem extends Subsystem {
         TelemetryManager.put("Right Wheel Target Speed", wheelSpeeds[1]);
 
         // Convert inches/sec → ticks/sec
-        double leftTicksPerSec = wheelSpeeds[0] / inchesPerSecondPerTick;
-        double rightTicksPerSec = wheelSpeeds[1] / inchesPerSecondPerTick;
+        double leftTicksPerSec = wheelSpeeds[0] / inchesPerTick;
+        double rightTicksPerSec = wheelSpeeds[1] / inchesPerTick;
 
         leftMotor.setVelocity(leftTicksPerSec);
         rightMotor.setVelocity(rightTicksPerSec);
@@ -120,8 +141,8 @@ public class DifferentialDriveSubsystem extends Subsystem {
         int rightPosition = rightMotor.getCurrentPosition();
 
         // Convert ticks → inches
-        double leftInches = leftPosition * inchesPerSecondPerTick;
-        double rightInches = rightPosition * inchesPerSecondPerTick;
+        double leftInches = leftPosition * inchesPerTick;
+        double rightInches = rightPosition * inchesPerTick;
 
         // Update pose estimator with wheel distances + IMU heading
         differentialPoseEstimator.update(new double[]{leftInches, rightInches}, getIMUHeading());

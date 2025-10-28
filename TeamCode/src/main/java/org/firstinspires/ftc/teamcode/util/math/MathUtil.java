@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.util.math;
 
 public final class MathUtil {
     private MathUtil() {} // prevent instantiation
