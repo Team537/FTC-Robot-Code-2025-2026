@@ -4,10 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.routines.ExampleRoutine;
+import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MotorSubsystem;
 import org.firstinspires.ftc.teamcode.util.MotorState;
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
-import org.firstinspires.ftc.teamcode.subsystems.DifferentialDriveSubsystem;
 import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 
@@ -16,7 +16,7 @@ public class RobotContainer {
 
     public OpMode opMode;
 
-    public DifferentialDriveSubsystem driveSubsystem;
+    public MecanumDriveSubsystem driveSubsystem;
 
     private final MotorSubsystem intakeSubsystem;
 
@@ -44,7 +44,7 @@ public class RobotContainer {
 
     private RobotContainer(OpMode opMode) {
         this.opMode = opMode;
-        driveSubsystem = new DifferentialDriveSubsystem(opMode.hardwareMap, Constants.DifferentialDrive.DIFFERENTIAL_DRIVE_CONFIG);
+        driveSubsystem = new MecanumDriveSubsystem(opMode.hardwareMap, Constants.Drive.MECANUM_DRIVE_CONFIG);
         driveSubsystem.register();
         intakeSubsystem = new MotorSubsystem(opMode.hardwareMap, Constants.Assemblys.intakeMotor);
         intakeSubsystem.register();
