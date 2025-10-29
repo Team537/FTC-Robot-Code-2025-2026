@@ -62,15 +62,28 @@ public class CommandScheduler {
         }
     }
 
+    public void addTrigger(Trigger trigger) {
+        triggers.add(trigger);
+    }
+    public void removeTrigger(Trigger trigger) {
+        triggers.remove(trigger);
+    }
+
     private Set<Command> commands = new LinkedHashSet<>();
     private Set<Command> pendingCommands = new LinkedHashSet<>();
     private Set<Command> endingCommands = new LinkedHashSet<>();
+    private Set<Trigger> triggers = new LinkedHashSet<>();
 
     public void run() {
 
         // run all subsystem periodic methods
         for (Subsystem subsystem : subsystems) {
             subsystem.periodic();
+        }
+
+        // Update triggers (check inputs)
+        for (Trigger t : triggers) {
+            t.update();
         }
 
         //scheduling all pending commands at one time so scheduling while commands are running doesn't cause any issues.
