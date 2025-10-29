@@ -25,28 +25,6 @@ public class ChassisVelocity2d {
         return rotationalVelocity;
     }
 
-    /**
-     * Converts this velocity into a field-relative velocity using the given robot orientation.
-     *
-     * @param robotHeading current robot orientation as a Rotation2d
-     * @return ChassisVelocity2d expressed in field coordinates
-     */
-    public ChassisVelocity2d toFieldRelative(Rotation2d robotHeading) {
-        Translation2d fieldTranslational = translationalVelocity.rotateBy(robotHeading);
-        return new ChassisVelocity2d(fieldTranslational, rotationalVelocity);
-    }
-
-    /**
-     * Converts this velocity into a robot-relative velocity using the given robot orientation.
-     *
-     * @param robotHeading current robot orientation as a Rotation2d
-     * @return ChassisVelocity2d expressed in robot coordinates
-     */
-    public ChassisVelocity2d toRobotRelative(Rotation2d robotHeading) {
-        Translation2d robotTranslational = translationalVelocity.rotateBy(robotHeading.unaryMinus());
-        return new ChassisVelocity2d(robotTranslational, rotationalVelocity);
-    }
-
     public static final ChassisVelocity2d ZERO = new ChassisVelocity2d(Translation2d.ZERO, 0.0);
 
     @Override

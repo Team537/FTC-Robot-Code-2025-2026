@@ -5,9 +5,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.util.HolonomicDriveConfig;
-import org.firstinspires.ftc.teamcode.util.mecanum.MecanumDriveConfig;
-import org.firstinspires.ftc.teamcode.util.mecanum.MecanumPoseEstimator;
+import org.firstinspires.ftc.teamcode.Constants;
+import org.firstinspires.ftc.teamcode.util.MecanumPoseEstimator;
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
 import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Pose2d;
@@ -26,8 +25,6 @@ import java.util.Arrays;
  */
 public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
 
-    private MecanumDriveConfig config;
-
     // ---------------- MOTORS ----------------
     private DcMotorEx frontLeftMotor;
     private DcMotorEx frontRightMotor;
@@ -38,57 +35,35 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
     private IMU imu;
 
     // ---------------- ODOMETRY ----------------
-    private MecanumPoseEstimator mecanumPoseEstimator;
-
-    private double inchesPerTick;
+    private MecanumPoseEstimator mecanumPoseEstimator =
+        new MecanumPoseEstimator(Constants.Drive.KINEMATICS, Pose2d.ZERO);
 
     /**
      * Constructor: initializes motors, IMU, and odometry
      */
-    public MecanumDriveSubsystem(HardwareMap hardwareMap, MecanumDriveConfig config) {
-        super(
-            new HolonomicDriveConfig()
-                .setTranslationalPID(config.translationalPID)
-                .setRotationalPID(config.rotationalPID)
-                .setMaxTranslationalSpeed(config.maxTranslationalSpeed)
-                .setMaxRotationalSpeed(config.maxRotationalSpeed)
-                .setMaxTranslationalAccel(config.maxTranslationalAccel)
-                .setMaxRotationalAccel(config.maxRotationalAccel)
-        );
-
-        this.config = config;
+    public MecanumDriveSubsystem(HardwareMap hardwareMap) {
+        super();
 
         // Initialize motors from hardware map
-        frontLeftMotor = hardwareMap.get(DcMotorEx.class, config.frontLeftMotorName);
-        frontRightMotor = hardwareMap.get(DcMotorEx.class, config.frontRightMotorName);
-        backLeftMotor = hardwareMap.get(DcMotorEx.class, config.backLeftMotorName);
-        backRightMotor = hardwareMap.get(DcMotorEx.class, config.backRightMotorName);
+        frontLeftMotor = hardwareMap.get(DcMotorEx.class, Constants.Drive.FRONT_LEFT_MOTOR_NAME);
+        frontRightMotor = hardwareMap.get(DcMotorEx.class, Constants.Drive.FRONT_RIGHT_MOTOR_NAME);
+        backLeftMotor = hardwareMap.get(DcMotorEx.class, Constants.Drive.BACK_LEFT_MOTOR_NAME);
+        backRightMotor = hardwareMap.get(DcMotorEx.class, Constants.Drive.BACK_RIGHT_MOTOR_NAME);
 
         // Set motor directions according to configuration constants
-        frontLeftMotor.setDirection(config.frontLeftMotorDirection);
-        frontRightMotor.setDirection(config.frontRightMotorDirection);
-        backLeftMotor.setDirection(config.backLeftMotorDirection);
-        backRightMotor.setDirection(config.backRightMotorDirection);
-
-        frontLeftMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
-        frontRightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
-        backLeftMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
-        backRightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
+        frontLeftMotor.setDirection(Constants.Drive.FRONT_LEFT_MOTOR_DIRECTION);
+        frontRightMotor.setDirection(Constants.Drive.FRONT_RIGHT_MOTOR_DIRECTION);
+        backLeftMotor.setDirection(Constants.Drive.BACK_LEFT_MOTOR_DIRECTION);
+        backRightMotor.setDirection(Constants.Drive.BACK_RIGHT_MOTOR_DIRECTION);
 
         // Initialize IMU
-        imu = hardwareMap.get(IMU.class, config.imuName);
+        imu = hardwareMap.get(IMU.class, Constants.Drive.IMU_NAME);
 
         // Force reading to initialize
         imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-        // Setup odometry
-        mecanumPoseEstimator = new MecanumPoseEstimator(config.kinematics, Pose2d.ZERO);
+        // Reset odometry to origin
         mecanumPoseEstimator.resetPose(Pose2d.ZERO, getIMUHeading());
-
-        // Calculate conversion: ticks/sec → inches/sec
-        double wheelCircumference = config.wheelCircumference;
-        this.inchesPerTick = wheelCircumference / config.ticksPerRevolution;
-
     }
 
     /**
@@ -119,38 +94,30 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
     public void setMotors(ChassisVelocity2d chassisVelocity) {
 
         // Convert chassis velocity to individual wheel speeds
-        // Convert to field relative first
-        double[] wheelSpeeds = config.kinematics.toWheelSpeeds(chassisVelocity.toRobotRelative(getRobotPose().getRotation()));
+        double[] wheelSpeeds = Constants.Drive.KINEMATICS.toWheelSpeeds(chassisVelocity);
 
         // Proportional scaling: prevent wheel speed from exceeding max
         double max = Arrays.stream(wheelSpeeds).map(Math::abs).max().orElse(0.0);
-        if (max > config.maxWheelSpeed) {
-            double scale = config.maxWheelSpeed / max;
+        if (max > Constants.Drive.MAX_WHEEL_SPEED) {
+            double scale = Constants.Drive.MAX_WHEEL_SPEED / max;
             for (int i = 0; i < wheelSpeeds.length; i++) {
                 wheelSpeeds[i] *= scale;
             }
         }
 
-        TelemetryManager.put("Reported Speed", config.kinematics.fromWheelSpeeds(wheelSpeeds).toString());
+        // Send telemetry for debugging
+        TelemetryManager.put("Wheel Speeds FL (in/s)", wheelSpeeds[0]);
+        TelemetryManager.put("Wheel Speeds FR (in/s)", wheelSpeeds[1]);
+        TelemetryManager.put("Wheel Speeds BL (in/s)", wheelSpeeds[2]);
+        TelemetryManager.put("Wheel Speeds BR (in/s)", wheelSpeeds[3]);
+        TelemetryManager.put("Reported Speed", Constants.Drive.KINEMATICS.fromWheelSpeeds(wheelSpeeds).toString());
 
         // Convert wheel speed from inches/sec → encoder ticks/sec
+        double ticksPerInch = Constants.Drive.TICKS_PER_REVOLUTION / Constants.Drive.WHEEL_CIRCUMFERENCE;
         double[] wheelSpeedsTicksPerSec = new double[4];
         for (int i = 0; i < 4; i++) {
-            wheelSpeedsTicksPerSec[i] = wheelSpeeds[i] / inchesPerTick;
+            wheelSpeedsTicksPerSec[i] = wheelSpeeds[i] * ticksPerInch;
         }
-
-        // Send telemetry for debugging
-        TelemetryManager.put("Wheel Speeds FL (tics/s)", wheelSpeedsTicksPerSec[0]);
-        TelemetryManager.put("Wheel Speeds FR (tics/s)", wheelSpeedsTicksPerSec[1]);
-        TelemetryManager.put("Wheel Speeds BL (tics/s)", wheelSpeedsTicksPerSec[2]);
-        TelemetryManager.put("Wheel Speeds BR (tics/s)", wheelSpeedsTicksPerSec[3]);
-
-        TelemetryManager.put("Measured Wheel Speeds FL (tics/s)", frontLeftMotor.getVelocity());
-        TelemetryManager.put("Measured Wheel Speeds FR (tics/s)", frontRightMotor.getVelocity());
-        TelemetryManager.put("Measured Wheel Speeds BL (tics/s)", backLeftMotor.getVelocity());
-        TelemetryManager.put("Measured Wheel Speeds BR (tics/s)", backRightMotor.getVelocity());
-
-        TelemetryManager.put("Motor Position", frontLeftMotor.getCurrentPosition());
 
         // Apply velocities to motors
         frontLeftMotor.setVelocity(wheelSpeedsTicksPerSec[0]);
@@ -180,9 +147,12 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
             backRightMotor.getCurrentPosition()
         };
 
+        // Convert ticks → inches
+        double ticksPerRev = Constants.Drive.TICKS_PER_REVOLUTION;
+        double wheelCircumference = Constants.Drive.WHEEL_CIRCUMFERENCE;
         double[] currentPositionInches = new double[4];
         for (int i = 0; i < 4; i++) {
-            currentPositionInches[i] = currentPositions[i] * inchesPerTick;
+            currentPositionInches[i] = currentPositions[i] * wheelCircumference / ticksPerRev;
         }
 
         // Update pose estimator with distances + IMU heading
