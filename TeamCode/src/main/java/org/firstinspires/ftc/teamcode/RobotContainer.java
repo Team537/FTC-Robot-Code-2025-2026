@@ -24,6 +24,10 @@ public class RobotContainer {
 
     private final MotorSubsystem hopperSubsystem;
 
+    private final MotorSubsystem shooterMotorLeftSubsystem;
+
+    private final MotorSubsystem shooterMotorRightSubsystem;
+
     private Gamepad gamepad1;
 
     private Gamepad gamepad2;
@@ -48,6 +52,10 @@ public class RobotContainer {
         intakeSubsystem.register();
         hopperSubsystem = new MotorSubsystem(opMode.hardwareMap, Constants.Assemblys.hopperMotor);
         hopperSubsystem.register();
+        shooterMotorLeftSubsystem= new MotorSubsystem(opMode.hardwareMap, Constants.Assemblys.shooterMotorLeft);
+        shooterMotorLeftSubsystem.register();
+        shooterMotorRightSubsystem= new MotorSubsystem(opMode.hardwareMap, Constants.Assemblys.shooterMotorRight);
+        shooterMotorRightSubsystem.register();
         bindGamepads(opMode);
     }
 
@@ -112,7 +120,7 @@ public class RobotContainer {
         hopperSubsystem.setDefaultCommand(
                 hopperSubsystem.getManualCommand(
                         () -> {
-                            boolean hopperPressed = gamepad1.x;
+                            boolean hopperPressed = gamepad1.a;
                             boolean reversePressed = gamepad1.left_trigger > 0;
                             TelemetryManager.put("Run Hopper", hopperPressed);
                             TelemetryManager.put("Reverse", reversePressed);
@@ -124,6 +132,39 @@ public class RobotContainer {
                         }
                 )
         );
+
+        shooterMotorLeftSubsystem.setDefaultCommand(
+                shooterMotorLeftSubsystem.getManualCommand(
+                        () -> {
+                            boolean shooterPressed = gamepad1.x;
+                            boolean reversePressed = gamepad1.left_trigger > 0;
+                            TelemetryManager.put("Run Shooter", shooterPressed);
+                            TelemetryManager.put("Reverse", reversePressed);
+
+                            MotorState determinedState = shooterPressed ? reversePressed ? MotorState.Backward : MotorState.Forward : MotorState.AtRest;
+                            TelemetryManager.put("Shooter State", determinedState);
+
+                            return determinedState;
+                        }
+                )
+        );
+
+        shooterMotorRightSubsystem.setDefaultCommand(
+                shooterMotorRightSubsystem.getManualCommand(
+                        () -> {
+                            boolean shooterPressed = gamepad1.x;
+                            boolean reversePressed = gamepad1.left_trigger <= 0;
+                            TelemetryManager.put("Run Shooter", shooterPressed);
+                            TelemetryManager.put("Reverse", reversePressed);
+
+                            MotorState determinedState = shooterPressed ? reversePressed ? MotorState.Backward : MotorState.Forward : MotorState.AtRest;
+                            TelemetryManager.put("Shooter State", determinedState);
+
+                            return determinedState;
+                        }
+                )
+        );
+
     }
 
     public void scheduleAuto() {

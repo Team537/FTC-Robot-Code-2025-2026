@@ -44,5 +44,9 @@ public class Constants {
         public static final String hopperMotor = "hopper motor";
 
         public static final String intakeMotor = "intake motor";
+
+        public static final String shooterMotorLeft = "shooter motor left";
+
+        public static final String shooterMotorRight = "shooter motor right";
     }
 }
