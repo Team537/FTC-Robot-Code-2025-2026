@@ -8,6 +8,8 @@ import org.firstinspires.ftc.teamcode.util.math.PIDFCoefficients;
 import org.firstinspires.ftc.teamcode.util.mecanum.MecanumDriveConfig;
 import org.firstinspires.ftc.teamcode.util.mecanum.MecanumDriveKinematics;
 import org.firstinspires.ftc.teamcode.util.ExtraShooterConfig;
+import org.firstinspires.ftc.teamcode.util.IntakeConfig;
+import org.firstinspires.ftc.teamcode.util.MecanumDriveKinematics;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 import org.firstinspires.ftc.teamcode.util.ShooterConfig;
 
@@ -163,4 +165,22 @@ public class Constants {
         public static final ExtraShooterConfig CONFIG = new ExtraShooterConfig(FIRST_SHOOTER_NAME, SECOND_SHOOTER_NAME, FIRST_SHOOTER_DIRECTION, SECOND_SHOOTER_DIRECTION, WHEEL_CIRCUMFERENCE, ENCODER_PULSE_PER_REVOLUTION, GEAR_RATIO, MAX_VELOCITY);
     }
 
+    public static class Intake {
+
+        public static final String INTAKE_NAME = "Intake";
+
+        public static final DcMotorSimple.Direction INTAKE_DIRECTION = DcMotorSimple.Direction.REVERSE;
+
+        public static final double GEAR_RATIO = 20;
+
+        public static final double WHEEL_CIRCUMFERENCE = (2.0 * Math.PI) * 4.0;
+
+        public static final double ENCODER_PULSE_PER_REVOLUTION = 7.0;
+
+        public static final double TICKS_PER_REVOLUTION = GEAR_RATIO * ENCODER_PULSE_PER_REVOLUTION;
+
+        public static final double MAX_VELOCITY = 50;
+
+        public static IntakeConfig CONFIG = new IntakeConfig(INTAKE_NAME, INTAKE_DIRECTION, GEAR_RATIO, WHEEL_CIRCUMFERENCE, ENCODER_PULSE_PER_REVOLUTION, TICKS_PER_REVOLUTION, MAX_VELOCITY);
+    }
 }
