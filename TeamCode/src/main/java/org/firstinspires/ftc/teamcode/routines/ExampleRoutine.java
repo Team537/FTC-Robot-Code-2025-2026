@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.routines;
 
-import org.firstinspires.ftc.teamcode.subsystems.HolonomicDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.DifferentialDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MotorSubsystem;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.InstantCommand;
@@ -9,12 +9,12 @@ import org.firstinspires.ftc.teamcode.util.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 
 public class ExampleRoutine {
-    private HolonomicDriveSubsystem driveSubsystem;
+    private DifferentialDriveSubsystem driveSubsystem;
     private MotorSubsystem hopperSubsystem;
     private MotorSubsystem intakeSubsystem;
     private Command shootCommand;
 
-    public ExampleRoutine(HolonomicDriveSubsystem driveSubsystem, MotorSubsystem hopperSubsystem, MotorSubsystem intakeSubsystem) {
+    public ExampleRoutine(DifferentialDriveSubsystem driveSubsystem, MotorSubsystem hopperSubsystem, MotorSubsystem intakeSubsystem) {
         this.driveSubsystem = driveSubsystem;
         this.hopperSubsystem = hopperSubsystem;
         this.intakeSubsystem = intakeSubsystem;

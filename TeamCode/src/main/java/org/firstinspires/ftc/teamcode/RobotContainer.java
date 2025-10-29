@@ -5,11 +5,9 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.routines.ExampleRoutine;
 import org.firstinspires.ftc.teamcode.subsystems.MotorSubsystem;
-import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
-import org.firstinspires.ftc.teamcode.util.MathUtil;
 import org.firstinspires.ftc.teamcode.util.MotorState;
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
-import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.InstantCommand;
+import org.firstinspires.ftc.teamcode.subsystems.DifferentialDriveSubsystem;
 import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 
@@ -18,7 +16,7 @@ public class RobotContainer {
 
     public OpMode opMode;
 
-    public MecanumDriveSubsystem driveSubsystem;
+    public DifferentialDriveSubsystem driveSubsystem;
 
     private final MotorSubsystem intakeSubsystem;
 
@@ -46,7 +44,7 @@ public class RobotContainer {
 
     private RobotContainer(OpMode opMode) {
         this.opMode = opMode;
-        driveSubsystem = new MecanumDriveSubsystem(opMode.hardwareMap);
+        driveSubsystem = new DifferentialDriveSubsystem(opMode.hardwareMap, Constants.DifferentialDrive.DIFFERENTIAL_DRIVE_CONFIG);
         driveSubsystem.register();
         intakeSubsystem = new MotorSubsystem(opMode.hardwareMap, Constants.Assemblys.intakeMotor);
         intakeSubsystem.register();
@@ -92,8 +90,10 @@ public class RobotContainer {
                             // Inverted because left (negative X) should result in a counter-clockwise (positive) rotation
                             double rotationalVelocity = -gamepad1.right_stick_x * Constants.Drive.MAX_ROTATIONAL_SPEED;
 
-                            // Clamp rotational velocity
-//                            rotationalVelocity = MathUtil.clamp(rotationalVelocity, -Constants.Drive.MAX_ROTATIONAL_SPEED, Constants.Drive.MAX_ROTATIONAL_SPEED);
+                            // Clamp translational velocity
+                            if (translationalVelocity.magnitude() > Constants.Drive.MAX_TRANSLATIONAL_SPEED) {
+                                translationalVelocity = translationalVelocity.div(translationalVelocity.magnitude()).times(Constants.Drive.MAX_TRANSLATIONAL_SPEED);
+                            }
 
                             // Return a value of the combined velocities
                             return new ChassisVelocity2d(translationalVelocity, rotationalVelocity);
