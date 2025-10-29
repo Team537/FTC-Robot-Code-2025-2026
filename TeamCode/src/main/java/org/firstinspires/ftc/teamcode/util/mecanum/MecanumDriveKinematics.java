@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.util;
+package org.firstinspires.ftc.teamcode.util.mecanum;
 
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
