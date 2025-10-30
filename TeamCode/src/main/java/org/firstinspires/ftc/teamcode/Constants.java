@@ -55,7 +55,7 @@ public class Constants {
             .setFrontRightMotor(FRONT_RIGHT_MOTOR_NAME,FRONT_RIGHT_MOTOR_DIRECTION)
             .setBackLeftMotor(BACK_LEFT_MOTOR_NAME,BACK_LEFT_MOTOR_DIRECTION)
             .setBackRightMotor(BACK_RIGHT_MOTOR_NAME,BACK_RIGHT_MOTOR_DIRECTION)
-            .setIMU(IMU_NAME,true)
+            .setIMU(IMU_NAME,false)
             .setKinematics(KINEMATICS)
             .setMaxWheelSpeed(MAX_WHEEL_SPEED)
             .setMaxTranslationalSpeed(MAX_TRANSLATIONAL_SPEED)

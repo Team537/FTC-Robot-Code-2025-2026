@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.util.HolonomicDriveConfig;
 import org.firstinspires.ftc.teamcode.util.mecanum.MecanumDriveConfig;
 import org.firstinspires.ftc.teamcode.util.mecanum.MecanumPoseEstimator;
@@ -96,7 +95,7 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
      * Returns the robot heading as a Rotation2d using the IMU yaw angle.
      */
     public Rotation2d getIMUHeading() {
-        return new Rotation2d(-imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        return new Rotation2d(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
     }
 
     /**
@@ -134,12 +133,6 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
 
         TelemetryManager.put("Reported Speed", config.kinematics.fromWheelSpeeds(wheelSpeeds).toString());
 
-        frontLeftMotor.setPower(wheelSpeeds[0] / Constants.Drive.MAX_WHEEL_SPEED);
-        frontRightMotor.setPower(wheelSpeeds[1] / Constants.Drive.MAX_WHEEL_SPEED);
-        backLeftMotor.setPower(wheelSpeeds[2] / Constants.Drive.MAX_WHEEL_SPEED);
-        backRightMotor.setPower(wheelSpeeds[3] / Constants.Drive.MAX_WHEEL_SPEED);
-
-        /*
         // Convert wheel speed from inches/sec → encoder ticks/sec
         double[] wheelSpeedsTicksPerSec = new double[4];
         for (int i = 0; i < 4; i++) {
@@ -157,15 +150,11 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
         TelemetryManager.put("Measured Wheel Speeds BL (tics/s)", backLeftMotor.getVelocity());
         TelemetryManager.put("Measured Wheel Speeds BR (tics/s)", backRightMotor.getVelocity());
 
-        TelemetryManager.put("Motor Position", frontLeftMotor.getCurrentPosition());
-
         // Apply velocities to motors
         frontLeftMotor.setVelocity(wheelSpeedsTicksPerSec[0]);
         frontRightMotor.setVelocity(wheelSpeedsTicksPerSec[1]);
         backLeftMotor.setVelocity(wheelSpeedsTicksPerSec[2]);
         backRightMotor.setVelocity(wheelSpeedsTicksPerSec[3]);
-
-         */
     }
 
     // ---------------- ODOMETRY ----------------
