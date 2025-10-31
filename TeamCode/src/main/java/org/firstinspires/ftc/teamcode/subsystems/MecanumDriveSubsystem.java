@@ -118,6 +118,12 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
     @Override
     public void setMotors(ChassisVelocity2d chassisVelocity) {
 
+        // Set motor directions according to configuration constants
+        frontLeftMotor.setDirection(config.frontLeftMotorDirection);
+        frontRightMotor.setDirection(config.frontRightMotorDirection);
+        backLeftMotor.setDirection(config.backLeftMotorDirection);
+        backRightMotor.setDirection(config.backRightMotorDirection);
+
         // Convert chassis velocity to individual wheel speeds
         // Convert to field relative first
         double[] wheelSpeeds = config.kinematics.toWheelSpeeds(chassisVelocity.toRobotRelative(getRobotPose().getRotation()));
@@ -149,6 +155,11 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
         TelemetryManager.put("Measured Wheel Speeds FR (tics/s)", frontRightMotor.getVelocity());
         TelemetryManager.put("Measured Wheel Speeds BL (tics/s)", backLeftMotor.getVelocity());
         TelemetryManager.put("Measured Wheel Speeds BR (tics/s)", backRightMotor.getVelocity());
+
+        TelemetryManager.put("Motor Direction FL", frontLeftMotor.getDirection());
+        TelemetryManager.put("Motor Direction FR", frontRightMotor.getDirection());
+        TelemetryManager.put("Motor Direction BL", backLeftMotor.getDirection());
+        TelemetryManager.put("Motor Direction BR", backRightMotor.getDirection());
 
         // Apply velocities to motors
         frontLeftMotor.setVelocity(wheelSpeedsTicksPerSec[0]);

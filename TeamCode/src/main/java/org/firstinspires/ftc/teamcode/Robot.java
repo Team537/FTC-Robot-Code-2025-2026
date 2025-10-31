@@ -96,7 +96,7 @@ public class Robot {
 
     /** Called once when TeleOp opmode init phase starts */
     public void teleOpInitStart() {
-
+        robotContainer.resetPose();
     }
 
     /** Called repeatedly while TeleOp opmode is in init */

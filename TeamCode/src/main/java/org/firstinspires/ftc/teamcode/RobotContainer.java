@@ -3,12 +3,15 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.routines.ExampleRoutine;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MotorSubsystem;
 import org.firstinspires.ftc.teamcode.util.MotorState;
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
+import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
 import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
+import org.firstinspires.ftc.teamcode.util.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 
 public class RobotContainer {
@@ -71,6 +74,9 @@ public class RobotContainer {
      * schedule all commands for manual control
      */
     public void scheduleTeleOp() {
+
+
+
         driveSubsystem.setDefaultCommand(
                 driveSubsystem.getDriveVelocityCommand(
                         () -> {
@@ -104,7 +110,7 @@ public class RobotContainer {
         intakeSubsystem.setDefaultCommand(
                 intakeSubsystem.getManualCommand(
                         () -> {
-                            boolean intakePressed = gamepad1.a;
+                            boolean intakePressed = gamepad1.right_bumper;
                             boolean reversePressed = gamepad1.left_trigger <= 0;
                             TelemetryManager.put("Run Intake", intakePressed);
                             TelemetryManager.put("Reverse", reversePressed);
@@ -120,7 +126,7 @@ public class RobotContainer {
         hopperSubsystem.setDefaultCommand(
                 hopperSubsystem.getManualCommand(
                         () -> {
-                            boolean hopperPressed = gamepad1.a;
+                            boolean hopperPressed = gamepad1.right_bumper;
                             boolean reversePressed = gamepad1.left_trigger > 0;
                             TelemetryManager.put("Run Hopper", hopperPressed);
                             TelemetryManager.put("Reverse", reversePressed);
@@ -173,4 +179,9 @@ public class RobotContainer {
         routine.getCommand().schedule();
         TelemetryManager.put("Scheduled Auto", true);
     }
+
+    public void resetPose() {
+        Command.instant(() -> driveSubsystem.setRobotPose(Pose2d.ZERO)).schedule();
+    }
+
 }
