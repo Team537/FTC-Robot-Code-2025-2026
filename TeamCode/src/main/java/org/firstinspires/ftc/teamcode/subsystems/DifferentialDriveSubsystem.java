@@ -91,7 +91,7 @@ public class DifferentialDriveSubsystem extends Subsystem {
         rightMotor.setDirection(config.rightMotorDirection);
 
         leftMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
-        rightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
+        rightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP, config.motorVelocityPID.kI, config.motorVelocityPID.kD, config.motorVelocityPID.kF.get());
 
     }
 
