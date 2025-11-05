@@ -64,16 +64,7 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
         backLeftMotor = hardwareMap.get(DcMotorEx.class, config.backLeftMotorName);
         backRightMotor = hardwareMap.get(DcMotorEx.class, config.backRightMotorName);
 
-        // Set motor directions according to configuration constants
-        frontLeftMotor.setDirection(config.frontLeftMotorDirection);
-        frontRightMotor.setDirection(config.frontRightMotorDirection);
-        backLeftMotor.setDirection(config.backLeftMotorDirection);
-        backRightMotor.setDirection(config.backRightMotorDirection);
-
-        frontLeftMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
-        frontRightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
-        backLeftMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
-        backRightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
+        setupMotors();
 
         // Initialize IMU
         imu = hardwareMap.get(IMU.class, config.imuName);
@@ -88,6 +79,20 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
         // Calculate conversion: ticks/sec → inches/sec
         double wheelCircumference = config.wheelCircumference;
         this.inchesPerTick = wheelCircumference / config.ticksPerRevolution;
+
+    }
+
+    public void setupMotors() {
+        // Set motor directions according to configuration constants
+        frontLeftMotor.setDirection(config.frontLeftMotorDirection);
+        frontRightMotor.setDirection(config.frontRightMotorDirection);
+        backLeftMotor.setDirection(config.backLeftMotorDirection);
+        backRightMotor.setDirection(config.backRightMotorDirection);
+
+        frontLeftMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP, config.motorVelocityPID.kI, config.motorVelocityPID.kD, config.motorVelocityPID.kF.get());
+        frontRightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP, config.motorVelocityPID.kI, config.motorVelocityPID.kD, config.motorVelocityPID.kF.get());
+        backLeftMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP, config.motorVelocityPID.kI, config.motorVelocityPID.kD, config.motorVelocityPID.kF.get());
+        backRightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP, config.motorVelocityPID.kI, config.motorVelocityPID.kD, config.motorVelocityPID.kF.get());
 
     }
 

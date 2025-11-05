@@ -52,6 +52,10 @@ public class RobotContainer {
         gamepad2 = opMode.gamepad2;
     }
 
+    public void setupHardware() {
+        driveSubsystem.setupMotors();
+    }
+
     /**
      * schedule all commands for manual control
      */

@@ -32,6 +32,7 @@ public class Robot {
     /** Called once when opmode init phase starts (all opmodes) */
     public void robotInitStart() {
         TelemetryManager.init(opMode.telemetry);
+        robotContainer.setupHardware();
     }
 
     /** Called repeatedly while opmode is in init but not started */
