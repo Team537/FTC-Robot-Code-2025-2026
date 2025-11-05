@@ -89,10 +89,10 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
         backLeftMotor.setDirection(config.backLeftMotorDirection);
         backRightMotor.setDirection(config.backRightMotorDirection);
 
-        frontLeftMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
-        frontRightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
-        backLeftMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
-        backRightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
+        frontLeftMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP, config.motorVelocityPID.kI, config.motorVelocityPID.kD, config.motorVelocityPID.kF.get());
+        frontRightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP, config.motorVelocityPID.kI, config.motorVelocityPID.kD, config.motorVelocityPID.kF.get());
+        backLeftMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP, config.motorVelocityPID.kI, config.motorVelocityPID.kD, config.motorVelocityPID.kF.get());
+        backRightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP, config.motorVelocityPID.kI, config.motorVelocityPID.kD, config.motorVelocityPID.kF.get());
 
     }
 
