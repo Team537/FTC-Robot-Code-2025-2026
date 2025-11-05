@@ -43,24 +43,25 @@ public class DifferentialDriveSubsystem extends Subsystem {
     private RateLimiter translationalAccelerationLimiter;
     private RateLimiter rotationalAccelerationLimiter;
 
+    private DifferentialDriveConfig config;
+
 
     private boolean imuInverted;
 
     public DifferentialDriveSubsystem(HardwareMap hardwareMap, DifferentialDriveConfig config) {
+
+        this.config = config;
+
         leftMotor = hardwareMap.get(DcMotorEx.class, config.leftMotorName);
         rightMotor = hardwareMap.get(DcMotorEx.class, config.rightMotorName);
 
-        leftMotor.setDirection(config.leftMotorDirection);
-        rightMotor.setDirection(config.rightMotorDirection);
+        setupMotors();
 
         translationalController = new PIDFController(config.translationalPID);
         rotationalController = new PIDFController(config.rotationalPID);
 
         translationalAccelerationLimiter = new RateLimiter(0.0,config.maxTranslationalAccel,0.5);
         rotationalAccelerationLimiter = new RateLimiter(0.0,config.maxRotationalAccel,0.5);
-
-        leftMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
-        rightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
 
         this.kinematics = config.kinematics;
         this.differentialPoseEstimator = new DifferentialPoseEstimator(kinematics,Pose2d.ZERO);
@@ -81,6 +82,16 @@ public class DifferentialDriveSubsystem extends Subsystem {
 
         // Reset odometry to origin
         differentialPoseEstimator.resetPose(Pose2d.ZERO, getIMUHeading());
+
+    }
+
+    public void setupMotors() {
+
+        leftMotor.setDirection(config.leftMotorDirection);
+        rightMotor.setDirection(config.rightMotorDirection);
+
+        leftMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
+        rightMotor.setVelocityPIDFCoefficients(config.motorVelocityPID.kP,config.motorVelocityPID.kI,config.motorVelocityPID.kD,config.motorVelocityPID.kF.get());
 
     }
 
