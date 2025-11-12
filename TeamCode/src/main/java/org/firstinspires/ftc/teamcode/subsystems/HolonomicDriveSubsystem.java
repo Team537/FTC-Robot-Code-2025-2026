@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import org.firstinspires.ftc.teamcode.util.HolonomicDriveConfig;
+import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.InstantCommand;
+import org.firstinspires.ftc.teamcode.util.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.util.math.MathUtil;
 import org.firstinspires.ftc.teamcode.util.math.PIDFController;
 import org.firstinspires.ftc.teamcode.util.math.RateLimiter;
@@ -170,7 +172,12 @@ public abstract class HolonomicDriveSubsystem extends Subsystem {
 
     /** Command to stop the chassis (zero velocity) */
     public Command getDriveVelocityCommandStop() {
-        return getDriveVelocityCommand(new ChassisVelocity2d(new Translation2d(0.0, 0.0), 0.0));
+        return new InstantCommand(
+                () -> {
+                    translationalSubsystem.setTranslationalVelocity(Translation2d.ZERO);
+                    rotationalSubsystem.setRotationalVelocity(0.0);
+                }
+        );
     }
 
     // ---------------- TRANSLATIONAL ----------------
