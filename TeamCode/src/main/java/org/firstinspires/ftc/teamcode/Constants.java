@@ -1,15 +1,32 @@
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Size;
+
+import com.qualcomm.hardware.maxbotix.MaxSonarI2CXL;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Position;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
+import org.firstinspires.ftc.robotcore.internal.ftdi.eeprom.FT_EE_X_Ctrl;
+import org.firstinspires.ftc.teamcode.subsystems.Vision.VisionOdometry;
 import org.firstinspires.ftc.teamcode.util.DifferentialDriveConfig;
 import org.firstinspires.ftc.teamcode.util.DifferentialDriveKinematics;
+import org.firstinspires.ftc.teamcode.util.geometry.Rotation3d;
+import org.firstinspires.ftc.teamcode.util.geometry.Transform3d;
+import org.firstinspires.ftc.teamcode.util.geometry.Translation3d;
 import org.firstinspires.ftc.teamcode.util.math.PIDFCoefficients;
 import org.firstinspires.ftc.teamcode.util.mecanum.MecanumDriveConfig;
 import org.firstinspires.ftc.teamcode.util.mecanum.MecanumDriveKinematics;
 import org.firstinspires.ftc.teamcode.util.ExtraShooterConfig;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 import org.firstinspires.ftc.teamcode.util.ShooterConfig;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.opencv.objdetect.FaceDetectorYN;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Constants {
 
@@ -161,6 +178,48 @@ public class Constants {
         public static final double MAX_VELOCITY = 50;
 
         public static final ExtraShooterConfig CONFIG = new ExtraShooterConfig(FIRST_SHOOTER_NAME, SECOND_SHOOTER_NAME, FIRST_SHOOTER_DIRECTION, SECOND_SHOOTER_DIRECTION, WHEEL_CIRCUMFERENCE, ENCODER_PULSE_PER_REVOLUTION, GEAR_RATIO, MAX_VELOCITY);
+    }
+
+    public static class Vision {
+
+        public static final List<Integer> ODOMETRY_VALID_IDS = List.of(
+            20,
+            24
+        );
+
+        public static final String FRONT_CAMERA_NAME = "front camera";
+        public static final Transform3d FRONT_CAMERA_OFFSET = new Transform3d(
+            new Translation3d(
+                0.0,
+                0.0,
+                0.0
+            ),
+            Rotation3d.ZERO
+        );
+
+        public static final Position FRONT_CAMERA_POSITION = new Position(
+            DistanceUnit.INCH,
+            FRONT_CAMERA_OFFSET.getTranslation().getX(),
+            FRONT_CAMERA_OFFSET.getTranslation().getY(),
+            FRONT_CAMERA_OFFSET.getTranslation().getZ(),
+            0
+        );
+        public static final YawPitchRollAngles FRONT_CAMERA_ORIENTATION = new YawPitchRollAngles(
+            AngleUnit.RADIANS,
+            FRONT_CAMERA_OFFSET.getRotation().getYaw(),
+            FRONT_CAMERA_OFFSET.getRotation().getPitch(),
+            FRONT_CAMERA_OFFSET.getRotation().getRoll(),
+            0
+        );
+
+        public static final double FRONT_CAMERA_FX = 898.542;
+        public static final double FRONT_CAMERA_FY = 898.940;
+        public static final double FRONT_CAMERA_CX = 596.128;
+        public static final double FRONT_CAMERA_CY = 404.541;
+
+        public static final Size FRONT_CAMERA_SIZE = new Size(1280, 720);
+        public static final VisionPortal.StreamFormat FRONT_CAMERA_STREAM_FORMAT = VisionPortal.StreamFormat.MJPEG;
+
     }
 
 }

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.util.DifferentialDriveConfig;
 import org.firstinspires.ftc.teamcode.util.DifferentialPoseEstimator;
+import org.firstinspires.ftc.teamcode.util.PoseEstimator;
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.RunCommand;
@@ -217,6 +218,10 @@ public class DifferentialDriveSubsystem extends Subsystem {
     /** Get the current robot pose */
     public Pose2d getRobotPose() {
         return differentialPoseEstimator.getEstimatedPose();
+    }
+
+    public PoseEstimator getPoseEstimator() {
+        return differentialPoseEstimator;
     }
 
     /**

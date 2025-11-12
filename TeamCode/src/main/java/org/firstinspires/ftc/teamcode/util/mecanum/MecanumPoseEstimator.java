@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.util.mecanum;
 
+import org.firstinspires.ftc.teamcode.util.PoseEstimator;
 import org.firstinspires.ftc.teamcode.util.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Twist2d;
 import org.firstinspires.ftc.teamcode.util.math.PoseMeasurement2d;
 
-public class MecanumPoseEstimator {
+public class MecanumPoseEstimator implements PoseEstimator {
 
     private final MecanumDriveKinematics kinematics;
     private Pose2d estimatedPose = new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0));
@@ -27,6 +28,11 @@ public class MecanumPoseEstimator {
         // Compute offset so that gyro reading matches newPose heading
         this.gyroOffset = newPose.getRotation().minus(currentGyroHeading);
         // also reset lastWheelPositions if needed
+    }
+
+    public void resetPose(Pose2d newPose) {
+        this.estimatedPose = newPose;
+        this.gyroOffset = gyroOffset.plus(newPose.getRotation().minus(estimatedPose.getRotation()));
     }
 
     /**

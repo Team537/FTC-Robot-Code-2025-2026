@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.util.HolonomicDriveConfig;
+import org.firstinspires.ftc.teamcode.util.PoseEstimator;
 import org.firstinspires.ftc.teamcode.util.mecanum.MecanumDriveConfig;
 import org.firstinspires.ftc.teamcode.util.mecanum.MecanumPoseEstimator;
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
@@ -193,6 +194,10 @@ public class MecanumDriveSubsystem extends HolonomicDriveSubsystem {
     /** Get the current robot pose */
     public Pose2d getRobotPose() {
         return mecanumPoseEstimator.getEstimatedPose();
+    }
+
+    public PoseEstimator getPoseEstimator() {
+        return mecanumPoseEstimator;
     }
 
     /**

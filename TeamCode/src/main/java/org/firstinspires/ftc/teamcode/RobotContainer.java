@@ -4,9 +4,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.robotcore.external.Const;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.subsystems.DifferentialDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ExtraShooterSubsytem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.Vision.VisionOdometry;
 import org.firstinspires.ftc.teamcode.util.DifferentialDriveConfig;
 import org.firstinspires.ftc.teamcode.util.math.MathUtil;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
@@ -16,13 +20,22 @@ import org.firstinspires.ftc.teamcode.util.ShooterConfig;
 import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 import org.firstinspires.ftc.teamcode.util.mecanum.MecanumDriveConfig;
+import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagGameDatabase;
+import org.firstinspires.ftc.vision.apriltag.AprilTagLibrary;
+import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
+
+import java.util.List;
 
 public class RobotContainer {
 
     public static RobotContainer instance;
     public OpMode opMode;
 
-   public DifferentialDriveSubsystem driveSubsystem;
+   public MecanumDriveSubsystem driveSubsystem;
+
+   public VisionPortal frontCamera;
+   public VisionOdometry visionOdometry;
 
     private Gamepad gamepad1;
     private Gamepad gamepad2;
@@ -39,8 +52,36 @@ public class RobotContainer {
 
     private RobotContainer(OpMode opMode) {
         this.opMode = opMode;
-        driveSubsystem = new DifferentialDriveSubsystem(opMode.hardwareMap, Constants.DifferentialDrive.DIFFERENTIAL_DRIVE_CONFIG);
+        driveSubsystem = new MecanumDriveSubsystem(opMode.hardwareMap, Constants.Drive.MECANUM_DRIVE_CONFIG);
         driveSubsystem.register();
+        AprilTagProcessor frontTagProcessor = new AprilTagProcessor.Builder()
+
+            .setLensIntrinsics(Constants.Vision.FRONT_CAMERA_FX,Constants.Vision.FRONT_CAMERA_FY,Constants.Vision.FRONT_CAMERA_CX,Constants.Vision.FRONT_CAMERA_CY)
+            .setCameraPose(Constants.Vision.FRONT_CAMERA_POSITION,Constants.Vision.FRONT_CAMERA_ORIENTATION)
+            .setTagLibrary(AprilTagGameDatabase.getDecodeTagLibrary())
+            .setTagFamily(AprilTagProcessor.TagFamily.TAG_36h11)
+
+            .setDrawTagID(true)
+            .setDrawTagOutline(true)
+            .setDrawAxes(true)
+            .setDrawCubeProjection(true)
+
+            .build();
+
+        frontCamera = new VisionPortal.Builder()
+            .setCamera(opMode.hardwareMap.get(WebcamName.class, Constants.Vision.FRONT_CAMERA_NAME))
+            .addProcessor(frontTagProcessor)
+            .setStreamFormat(Constants.Vision.FRONT_CAMERA_STREAM_FORMAT)
+            .setCameraResolution(Constants.Vision.FRONT_CAMERA_SIZE)
+            .build();
+
+        visionOdometry = new VisionOdometry(
+            List.of(frontTagProcessor),
+            Constants.Vision.ODOMETRY_VALID_IDS,
+            driveSubsystem.getPoseEstimator()
+        );
+        visionOdometry.register();
+
         bindGamepads(opMode);
     }
 

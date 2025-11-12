@@ -5,7 +5,7 @@ import org.firstinspires.ftc.teamcode.util.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Twist2d;
 
-public class DifferentialPoseEstimator {
+public class DifferentialPoseEstimator implements PoseEstimator {
 
     private final DifferentialDriveKinematics kinematics;
     private Pose2d estimatedPose = new Pose2d(new Translation2d(0.0, 0.0), new Rotation2d(0.0));
@@ -24,8 +24,11 @@ public class DifferentialPoseEstimator {
     public void resetPose(Pose2d newPose, Rotation2d currentGyroHeading) {
         this.estimatedPose = newPose;
         this.gyroOffset = newPose.getRotation().minus(currentGyroHeading);
-        lastWheelPositions[0] = 0.0;
-        lastWheelPositions[1] = 0.0;
+    }
+
+    public void resetPose(Pose2d newPose) {
+        this.estimatedPose = newPose;
+        this.gyroOffset = gyroOffset.plus(newPose.getRotation().minus(estimatedPose.getRotation()));
     }
 
     /**
