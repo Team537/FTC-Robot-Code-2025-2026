@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.routines.ExampleRoutine;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MotorSubsystem;
@@ -29,8 +28,6 @@ public class RobotContainer {
     private final ShooterSubsystem shooterSubsytem;
 
     private Gamepad gamepad1;
-
-    private Gamepad gamepad2;
 
     public static RobotContainer getInstance(OpMode opMode) {
         if (instance == null) {
@@ -64,7 +61,6 @@ public class RobotContainer {
      */
     private void bindGamepads(OpMode opMode) {
         gamepad1 = opMode.gamepad1;
-        gamepad2 = opMode.gamepad2;
     }
 
     /**

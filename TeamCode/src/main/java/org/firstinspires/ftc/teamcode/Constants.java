@@ -7,9 +7,7 @@ import org.firstinspires.ftc.teamcode.util.DifferentialDriveKinematics;
 import org.firstinspires.ftc.teamcode.util.math.PIDFCoefficients;
 import org.firstinspires.ftc.teamcode.util.mecanum.MecanumDriveConfig;
 import org.firstinspires.ftc.teamcode.util.mecanum.MecanumDriveKinematics;
-import org.firstinspires.ftc.teamcode.util.ExtraShooterConfig;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
-import org.firstinspires.ftc.teamcode.util.ShooterConfig;
 
 public class Constants {
 
@@ -127,49 +125,5 @@ public class Constants {
             .setTranslationalPID(new PIDFCoefficients(1.0,0.0,0.0,0.0))
             .setRotationalPID(new PIDFCoefficients(1.0,0.0,0.0,0.0));
 
-    }
-
-    public static class Shooter {
-
-        public static final String SHOOTER_NAME = "shooter";
-
-        //Change direction to fit needs of the robot
-        public static final DcMotorSimple.Direction SHOOTER_DIRECTION = DcMotorSimple.Direction.FORWARD;
-
-        public static final double GEAR_RATIO = 20;
-
-        public static final double WHEEL_CIRCUMFERENCE = (2.0 * Math.PI) * 4.0;
-
-        public static final double ENCODER_PULSE_PER_REVOLUTION = 7.0;
-
-        public static final double TICKS_PER_REVOLUTION = GEAR_RATIO * ENCODER_PULSE_PER_REVOLUTION;
-
-        public static final double MAX_VELOCITY = 50;
-
-        public static final ShooterConfig CONFIG = new ShooterConfig(SHOOTER_NAME, SHOOTER_DIRECTION, WHEEL_CIRCUMFERENCE, ENCODER_PULSE_PER_REVOLUTION, GEAR_RATIO, MAX_VELOCITY);
-    }
-
-    public static class ExtraShooter {
-
-        public static final String FIRST_SHOOTER_NAME = "FirstShooter";
-
-        public static final String SECOND_SHOOTER_NAME = "SecondShooter";
-
-        //Change direction to fit needs of the robot
-        public static final DcMotorSimple.Direction FIRST_SHOOTER_DIRECTION = DcMotorSimple.Direction.FORWARD;
-
-        public static final DcMotorSimple.Direction SECOND_SHOOTER_DIRECTION = DcMotorSimple.Direction.FORWARD;
-
-        public static final double GEAR_RATIO = 20;
-
-        public static final double WHEEL_CIRCUMFERENCE = (2.0 * Math.PI) * 4.0;
-
-        public static final double ENCODER_PULSE_PER_REVOLUTION = 7.0;
-
-        public static final double TICKS_PER_REVOLUTION = GEAR_RATIO * ENCODER_PULSE_PER_REVOLUTION;
-
-        public static final double MAX_VELOCITY = 50;
-
-        public static final ExtraShooterConfig CONFIG = new ExtraShooterConfig(FIRST_SHOOTER_NAME, SECOND_SHOOTER_NAME, FIRST_SHOOTER_DIRECTION, SECOND_SHOOTER_DIRECTION, WHEEL_CIRCUMFERENCE, ENCODER_PULSE_PER_REVOLUTION, GEAR_RATIO, MAX_VELOCITY);
     }
 }
