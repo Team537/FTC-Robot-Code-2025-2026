@@ -7,6 +7,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.routines.ExampleRoutine;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MotorSubsystem;
+import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.util.MotorState;
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
@@ -25,9 +26,7 @@ public class RobotContainer {
 
     private final MotorSubsystem hopperSubsystem;
 
-    private final MotorSubsystem shooterMotorLeftSubsystem;
-
-    private final MotorSubsystem shooterMotorRightSubsystem;
+    private final ShooterSubsystem shooterSubsytem;
 
     private Gamepad gamepad1;
 
@@ -47,16 +46,14 @@ public class RobotContainer {
 
     private RobotContainer(OpMode opMode) {
         this.opMode = opMode;
-        driveSubsystem = new MecanumDriveSubsystem(opMode.hardwareMap, Constants.Drive.MECANUM_DRIVE_CONFIG);
-        driveSubsystem.register();
-        intakeSubsystem = new MotorSubsystem(opMode.hardwareMap, Constants.Assemblys.intakeMotor);
-        intakeSubsystem.register();
-        hopperSubsystem = new MotorSubsystem(opMode.hardwareMap, Constants.Assemblys.hopperMotor);
-        hopperSubsystem.register();
-        shooterMotorLeftSubsystem= new MotorSubsystem(opMode.hardwareMap, Constants.Assemblys.shooterMotorLeft);
-        shooterMotorLeftSubsystem.register();
-        shooterMotorRightSubsystem= new MotorSubsystem(opMode.hardwareMap, Constants.Assemblys.shooterMotorRight);
-        shooterMotorRightSubsystem.register();
+        this.driveSubsystem = new MecanumDriveSubsystem(opMode.hardwareMap, Constants.Drive.MECANUM_DRIVE_CONFIG);
+        this.driveSubsystem.register();
+        this.intakeSubsystem = new MotorSubsystem(opMode.hardwareMap, Constants.Assemblys.intakeMotor);
+        this.intakeSubsystem.register();
+        this.hopperSubsystem = new MotorSubsystem(opMode.hardwareMap, Constants.Assemblys.hopperMotor);
+        this.hopperSubsystem.register();
+        this.shooterSubsytem = new ShooterSubsystem(opMode.hardwareMap, Constants.Assemblys.shooterMotorLeft, Constants.Assemblys.shooterMotorRight);
+        this.shooterSubsytem.register();
         bindGamepads(opMode);
     }
 
@@ -139,8 +136,9 @@ public class RobotContainer {
                 )
         );
 
-        shooterMotorLeftSubsystem.setDefaultCommand(
-                shooterMotorLeftSubsystem.getManualCommand(
+
+        shooterSubsytem.setDefaultCommand(
+                shooterSubsytem.getManualShootCommand(
                         () -> {
                             boolean shooterPressed = gamepad1.x;
                             boolean reversePressed = gamepad1.left_trigger > 0;
@@ -154,28 +152,11 @@ public class RobotContainer {
                         }
                 )
         );
-
-        shooterMotorRightSubsystem.setDefaultCommand(
-                shooterMotorRightSubsystem.getManualCommand(
-                        () -> {
-                            boolean shooterPressed = gamepad1.x;
-                            boolean reversePressed = gamepad1.left_trigger <= 0;
-                            TelemetryManager.put("Run Shooter", shooterPressed);
-                            TelemetryManager.put("Reverse", reversePressed);
-
-                            MotorState determinedState = shooterPressed ? reversePressed ? MotorState.Backward : MotorState.Forward : MotorState.AtRest;
-                            TelemetryManager.put("Shooter State", determinedState);
-
-                            return determinedState;
-                        }
-                )
-        );
-
     }
 
     public void scheduleAuto() {
         TelemetryManager.put("Scheduling Auto", true);
-        ExampleRoutine routine = new ExampleRoutine(this.driveSubsystem, this.hopperSubsystem, this.intakeSubsystem);
+        ExampleRoutine routine = new ExampleRoutine(this.driveSubsystem, this.hopperSubsystem, this.intakeSubsystem, this.shooterSubsytem);
         routine.getCommand().schedule();
         TelemetryManager.put("Scheduled Auto", true);
     }

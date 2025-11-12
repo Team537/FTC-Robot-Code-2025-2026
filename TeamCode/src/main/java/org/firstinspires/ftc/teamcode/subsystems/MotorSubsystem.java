@@ -17,11 +17,17 @@ import java.util.function.Supplier;
 public class MotorSubsystem extends Subsystem {
     private final DcMotorEx motor;
 
+    private boolean inverted = false;
+
     public MotorSubsystem(HardwareMap hardwareMap, String motorName) {
         super();
 
         this.motor = hardwareMap.get(DcMotorEx.class, motorName);
         this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+    }
+
+    public void setMotorInversion(boolean inverted) {
+        this.inverted = inverted;
     }
 
     public Command getManualCommand(Supplier<MotorState> motorStateSupplier) {
@@ -30,6 +36,10 @@ public class MotorSubsystem extends Subsystem {
             switch (motorStateSupplier.get()) {
                 case Forward: power = 1; break;
                 case Backward: power = -1; break;
+            }
+
+            if (this.inverted) {
+                power *= -1;
             }
 
             this.motor.setPower(power);
@@ -44,6 +54,10 @@ public class MotorSubsystem extends Subsystem {
                 switch (motorState) {
                     case Forward: power = 1; break;
                     case Backward: power = -1; break;
+                }
+
+                if (this.inverted) {
+                    power *= -1;
                 }
 
                 this.motor.setPower(power);

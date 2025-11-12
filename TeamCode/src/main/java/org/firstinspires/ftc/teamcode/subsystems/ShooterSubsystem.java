@@ -1,61 +1,36 @@
-//Use this if the robot has only one shooter, use the Extra Shooter Subsystem if there are two shooters
 package org.firstinspires.ftc.teamcode.subsystems;
 
-import static org.firstinspires.ftc.teamcode.Constants.Shooter.MAX_VELOCITY;
-
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
-import org.firstinspires.ftc.teamcode.Constants;
-import org.firstinspires.ftc.teamcode.util.ShooterConfig;
-import org.firstinspires.ftc.teamcode.util.TelemetryManager;
+import org.firstinspires.ftc.teamcode.util.MotorState;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
-import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.InstantCommand;
-import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.RunCommand;
+import org.firstinspires.ftc.teamcode.util.commandsystem.Commands.Groups.ParallelCommandGroup;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Subsystem;
 
 import java.util.function.Supplier;
 
 public class ShooterSubsystem extends Subsystem {
+    private final MotorSubsystem leftMotorSubsystem;
+    private final MotorSubsystem rightMotorSubsystem;
 
-    //Determine motor for the Shooter
-    private DcMotorEx shooterMotor;
-    //Call configuration for shooter
-    private ShooterConfig config;
-
-    // Maps the direction and name of the motor
-    public ShooterSubsystem (HardwareMap hardwareMap, ShooterConfig config) {
+    public ShooterSubsystem (HardwareMap hardwareMap, String leftMotorName, String rightMotorName) {
         super();
-        this.config = config;
 
-        shooterMotor = hardwareMap.get(DcMotorEx.class, config.motorName);
-
-        shooterMotor.setDirection(config.motorDirection);
-
-        shooterMotor.setVelocityPIDFCoefficients(1,0,0,15);
+        this.leftMotorSubsystem = new MotorSubsystem(hardwareMap, leftMotorName);
+        this.rightMotorSubsystem = new MotorSubsystem(hardwareMap, rightMotorName);
+        this.rightMotorSubsystem.setMotorInversion(true);
     }
-
-    //Command to get the Velocity
-    public Command getSetVelocityCommand(Supplier<Double> velocitySupplier) {
-        return new RunCommand(
-                () -> {
-                    double wheelSpeed = velocitySupplier.get();
-                    double ticksPerInch = Constants.Shooter.TICKS_PER_REVOLUTION / Constants.Shooter.WHEEL_CIRCUMFERENCE;
-                    double wheelSpeedTicksPerSec = wheelSpeed * ticksPerInch;
-
-                    shooterMotor.setVelocity(wheelSpeedTicksPerSec);
-                }
+    public Command getManualShootCommand(Supplier<MotorState> motorStateSupplier) {
+        return new ParallelCommandGroup(
+            this.leftMotorSubsystem.getManualCommand(motorStateSupplier),
+            this.rightMotorSubsystem.getManualCommand(motorStateSupplier)
         ).withRequirements(this);
     }
 
-    //Command to stop the velocity
-    public Command getStopVelocityCommand() {
-        return new InstantCommand(
-                () -> {
-                    shooterMotor.setVelocity(0.0);
-        }
-        );
+    public Command getAutoShootCommand() {
+        return new ParallelCommandGroup(
+            this.leftMotorSubsystem.getRunForTimeCommand(4, MotorState.Forward),
+            this.rightMotorSubsystem.getRunForTimeCommand(4, MotorState.Backward)
+        ).withRequirements(this);
     }
-
-
 }
