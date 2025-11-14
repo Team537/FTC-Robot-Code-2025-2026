@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.util.MotorState;
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
@@ -44,6 +45,17 @@ public class MotorSubsystem extends Subsystem {
 
             this.motor.setPower(power);
             TelemetryManager.put("power", power);
+        }).withRequirements(this);
+    }
+
+    public Command getVelocityCommand(Supplier<Double> rpm) {
+        return new RunCommand(() -> {
+            double radpersec = rpm.get() * 2 * Math.PI / 60;
+            if (this.inverted) {
+                radpersec *= -1;
+            }
+            this.motor.setVelocity(radpersec, AngleUnit.RADIANS);
+            TelemetryManager.put("rad per second", radpersec);
         }).withRequirements(this);
     }
 

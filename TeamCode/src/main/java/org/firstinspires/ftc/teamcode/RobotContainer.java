@@ -134,17 +134,17 @@ public class RobotContainer {
 
 
         shooterSubsytem.setDefaultCommand(
-                shooterSubsytem.getManualShootCommand(
+                shooterSubsytem.getVelocityShootCommand(
                         () -> {
                             boolean shooterPressed = gamepad1.x;
                             boolean reversePressed = gamepad1.left_trigger > 0;
                             TelemetryManager.put("Run Shooter", shooterPressed);
                             TelemetryManager.put("Reverse", reversePressed);
 
-                            MotorState determinedState = shooterPressed ? reversePressed ? MotorState.Backward : MotorState.Forward : MotorState.AtRest;
-                            TelemetryManager.put("Shooter State", determinedState);
+                            double rpm = shooterPressed ? reversePressed ? -100 : 100 : 0;
+                            TelemetryManager.put("Shooter State", rpm);
 
-                            return determinedState;
+                            return rpm;
                         }
                 )
         );

@@ -27,6 +27,13 @@ public class ShooterSubsystem extends Subsystem {
         ).withRequirements(this);
     }
 
+    public Command getVelocityShootCommand(Supplier<Double> rpm) {
+        return new ParallelCommandGroup(
+                this.leftMotorSubsystem.getVelocityCommand(rpm),
+                this.rightMotorSubsystem.getVelocityCommand(rpm)
+        ).withRequirements(this);
+    }
+
     public Command getAutoShootCommand() {
         return new ParallelCommandGroup(
             this.leftMotorSubsystem.getRunForTimeCommand(4, MotorState.Forward),
