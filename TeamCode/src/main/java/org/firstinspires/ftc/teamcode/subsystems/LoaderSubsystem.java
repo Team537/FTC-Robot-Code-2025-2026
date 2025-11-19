@@ -32,6 +32,6 @@ public class LoaderSubsystem {
                 () -> {
                     loaderServo.setPosition(Constants.Loader.SHOOT_POSITION);
                 }
-        )
+        );
     }
 }
