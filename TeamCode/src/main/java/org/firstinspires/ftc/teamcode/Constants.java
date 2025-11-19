@@ -172,4 +172,14 @@ public class Constants {
 
         public static final ExtraShooterConfig CONFIG = new ExtraShooterConfig(FIRST_SHOOTER_NAME, SECOND_SHOOTER_NAME, FIRST_SHOOTER_DIRECTION, SECOND_SHOOTER_DIRECTION, WHEEL_CIRCUMFERENCE, ENCODER_PULSE_PER_REVOLUTION, GEAR_RATIO, MAX_VELOCITY);
     }
+
+    public static class Loader {
+        public static final String LOADER_NAME = "Loader";
+
+        public static final double START_POSITION = 0.0;
+
+        public static final double LOAD_POSITION = 0.5;
+
+        public static final double SHOOT_POSITION = 1.0;
+    }
 }
