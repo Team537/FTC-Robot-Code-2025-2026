@@ -130,8 +130,8 @@ public class Constants {
     public static class Loader {
         public static final String LOADER_NAME = "Loader";
 
-        public static final double LOAD_POSITION = 0.95;
+        public static final double LOAD_POSITION = 0.7;
 
-        public static final double SHOOT_POSITION = 1.0;
+        public static final double SHOOT_POSITION = 0.9;
     }
 }
