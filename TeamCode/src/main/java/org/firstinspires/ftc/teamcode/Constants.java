@@ -126,4 +126,12 @@ public class Constants {
             .setRotationalPID(new PIDFCoefficients(1.0,0.0,0.0,0.0));
 
     }
+
+    public static class Loader {
+        public static final String LOADER_NAME = "Loader";
+
+        public static final double LOAD_POSITION = 0.7;
+
+        public static final double SHOOT_POSITION = 0.9;
+    }
 }

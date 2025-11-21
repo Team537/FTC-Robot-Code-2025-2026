@@ -4,12 +4,14 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.routines.ExampleRoutine;
+import org.firstinspires.ftc.teamcode.subsystems.LoaderSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MotorSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ShooterSubsystem;
 import org.firstinspires.ftc.teamcode.util.MotorState;
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
 import org.firstinspires.ftc.teamcode.util.commandsystem.Command;
+import org.firstinspires.ftc.teamcode.util.commandsystem.Trigger;
 import org.firstinspires.ftc.teamcode.util.geometry.ChassisVelocity2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
@@ -26,6 +28,8 @@ public class RobotContainer {
     private final MotorSubsystem hopperSubsystem;
 
     private final ShooterSubsystem shooterSubsytem;
+
+    private final LoaderSubsystem loaderSubsystem;
 
     private Gamepad gamepad1;
 
@@ -51,6 +55,8 @@ public class RobotContainer {
         this.hopperSubsystem.register();
         this.shooterSubsytem = new ShooterSubsystem(opMode.hardwareMap, Constants.Assemblys.shooterMotorLeft, Constants.Assemblys.shooterMotorRight);
         this.shooterSubsytem.register();
+        this.loaderSubsystem = new LoaderSubsystem(opMode.hardwareMap);
+        this.loaderSubsystem.register();
         bindGamepads(opMode);
     }
 
@@ -61,6 +67,10 @@ public class RobotContainer {
      */
     private void bindGamepads(OpMode opMode) {
         gamepad1 = opMode.gamepad1;
+    }
+
+    public void setupHardware() {
+        driveSubsystem.setupMotors();
     }
 
     /**
@@ -148,6 +158,25 @@ public class RobotContainer {
                         }
                 )
         );
+
+//        loaderSubsystem.setDefaultCommand(
+//                loaderSubsystem.getManualCommand(
+//                        () -> {
+//                            boolean releasePressed = gamepad1.a;
+//                            TelemetryManager.put("Release Shooter", releasePressed);
+//
+//                            MotorState determinedState = releasePressed ? MotorState.Forward : MotorState.AtRest;
+//                            TelemetryManager.put("Release State", determinedState);
+//
+//                            return determinedState;
+//                        }
+//                )
+//        );
+
+        Trigger shootTrigger = new Trigger(() -> gamepad1.a);
+        shootTrigger.onPress(loaderSubsystem.setShootPositionCommand());
+        shootTrigger.onRelease(loaderSubsystem.setLoadPositionCommand());
+        shootTrigger.add();
     }
 
     public void scheduleAuto() {
