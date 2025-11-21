@@ -11,13 +11,13 @@ import org.firstinspires.ftc.teamcode.util.geometry.Pose2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Rotation2d;
 import org.firstinspires.ftc.teamcode.util.geometry.Translation2d;
 
-public class ExampleRoutine {
+public class AutoRoutine {
     private MecanumDriveSubsystem driveSubsystem;
     private MotorSubsystem hopperSubsystem;
     private MotorSubsystem intakeSubsystem;
     private ShooterSubsystem shooterSubsystem;
 
-    public ExampleRoutine(MecanumDriveSubsystem driveSubsystem, MotorSubsystem hopperSubsystem, MotorSubsystem intakeSubsystem, ShooterSubsystem shooterSubsystem) {
+    public AutoRoutine(MecanumDriveSubsystem driveSubsystem, MotorSubsystem hopperSubsystem, MotorSubsystem intakeSubsystem, ShooterSubsystem shooterSubsystem) {
         this.driveSubsystem = driveSubsystem;
         this.hopperSubsystem = hopperSubsystem;
         this.intakeSubsystem = intakeSubsystem;
@@ -26,7 +26,7 @@ public class ExampleRoutine {
 
     public Command getCommand() {
         return this.driveSubsystem.getDriveToPoseCommand(
-                new Pose2d(new Translation2d(100, 100), new Rotation2d(0))
+                new Pose2d(new Translation2d(-8.75, 0), Rotation2d.fromDegrees(-45))
         ).withTimeout(2.0).andThen(
                 driveSubsystem.getDriveVelocityCommandStop()
         ).andThen(

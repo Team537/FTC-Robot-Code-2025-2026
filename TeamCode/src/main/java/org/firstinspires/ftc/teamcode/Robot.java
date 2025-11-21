@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.util.TelemetryManager;
 import org.firstinspires.ftc.teamcode.util.commandsystem.CommandScheduler;
+import org.firstinspires.ftc.teamcode.util.geometry.Pose2d;
 
 /**
  * Core Robot class.
@@ -85,9 +86,9 @@ public class Robot {
 
     /** Called once when Auto opmode becomes active */
     public void autoActiveStart() {
-
+        // Sets initial position
+        robotContainer.driveSubsystem.setRobotPose(new Pose2d(-8.75, -64.875, 0));
         robotContainer.scheduleAuto();
-
     }
 
     /** Called repeatedly while Auto opmode is active */

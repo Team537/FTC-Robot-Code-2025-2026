@@ -20,8 +20,16 @@ public class MotorSubsystem extends Subsystem {
 
     private boolean inverted = false;
 
+    private double power;
+
     public MotorSubsystem(HardwareMap hardwareMap, String motorName) {
+        this(hardwareMap, motorName, 1);
+    }
+
+    public MotorSubsystem(HardwareMap hardwareMap, String motorName, double power) {
         super();
+
+        this.power = power;
 
         this.motor = hardwareMap.get(DcMotorEx.class, motorName);
         this.motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -35,8 +43,8 @@ public class MotorSubsystem extends Subsystem {
         return new RunCommand(() -> {
             double power = 0;
             switch (motorStateSupplier.get()) {
-                case Forward: power = 1; break;
-                case Backward: power = -1; break;
+                case Forward: power = this.power; break;
+                case Backward: power = -this.power; break;
             }
 
             if (this.inverted) {
@@ -64,8 +72,8 @@ public class MotorSubsystem extends Subsystem {
             new RunCommand(() -> {
                 double power = 0;
                 switch (motorState) {
-                    case Forward: power = 1; break;
-                    case Backward: power = -1; break;
+                    case Forward: power = this.power; break;
+                    case Backward: power = -this.power; break;
                 }
 
                 if (this.inverted) {

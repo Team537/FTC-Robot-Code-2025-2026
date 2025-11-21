@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.routines.ExampleRoutine;
+import org.firstinspires.ftc.teamcode.routines.AutoRoutine;
 import org.firstinspires.ftc.teamcode.subsystems.LoaderSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MecanumDriveSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.MotorSubsystem;
@@ -181,7 +181,7 @@ public class RobotContainer {
 
     public void scheduleAuto() {
         TelemetryManager.put("Scheduling Auto", true);
-        ExampleRoutine routine = new ExampleRoutine(this.driveSubsystem, this.hopperSubsystem, this.intakeSubsystem, this.shooterSubsytem);
+        AutoRoutine routine = new AutoRoutine(this.driveSubsystem, this.hopperSubsystem, this.intakeSubsystem, this.shooterSubsytem);
         routine.getCommand().schedule();
         TelemetryManager.put("Scheduled Auto", true);
     }
